@@ -1,0 +1,99 @@
+import unicodedata
+
+FONT_FAMILY_MAP = {
+    "Gurmukhi (Unicode)": "Raavi",
+    "Raavi (Unicode)": "Raavi",
+    "Asees": "Asees",
+    "Anmol Lipi": "AnmolLipi",
+    "Joy": "Joy",
+    "Gurbani": "GurbaniLipi",
+    "AmritLipi": "AmritLipi",
+    "Satluj": "Satluj",
+    "Amar Lipi": "AmarLipi",
+    "Gurumukhi Lys": "GurumukhiLys-020-Condensed",
+}
+DROPDOWN_TO_CONVERTER = {
+    "Gurmukhi (Unicode)": "Unicode",
+    "Raavi (Unicode)": "Unicode",
+    "Asees": "Asees",
+    "Anmol Lipi": "AnmolLipi",
+    "Joy": "Joy",
+    "Gurbani": "GurbaniLipi",
+    "AmritLipi": "AmritLipi",
+    "Satluj": "Satluj",
+    "Amar Lipi": "AmarLipi",
+    "Gurumukhi Lys": "GurumukhiLys",
+}
+CONV_SOURCE_UNICODE = "AnmolUni"
+
+def sanitize_unicode(s):
+    if not s:
+        return s
+    s = unicodedata.normalize('NFC', s)
+    for ch in ('\u200d','\u200c','\u200b','\u2060','\u00A0','\ufeff','\u00ad'):
+        s = s.replace(ch, ' ')
+    
+    # Split by line to preserve layout and newlines, clean spaces within each line
+    lines = s.splitlines()
+    cleaned_lines = []
+    for line in lines:
+        cleaned_line = " ".join(line.split())
+        cleaned_lines.append(cleaned_line)
+    return "\n".join(cleaned_lines)
+
+def is_gurmukhi_unicode(text):
+    if not text:
+        return False
+    # If there is even one character in the Gurmukhi range, it is Unicode
+    return any('\u0A00' <= c <= '\u0A7F' for c in text)
+
+def detect_legacy_font(text):
+    if any(x in text for x in ["syvw", "iProzpUr", "lyb", "pulIs", "mJy", "Awp"]):
+        return "Asees"
+    return "AnmolLipi"
+
+WORD_FONT_MAP = {
+    "Unicode": "Raavi",
+    "AnmolLipi": "Anmol Lipi",
+    "Asees": "Asees",
+    "Joy": "Joy",
+    "GurbaniLipi": "GurbaniLipi",
+    "AmritLipi": "AmritLipi",
+    "Satluj": "Satluj",
+    "AmarLipi": "AmarLipi",
+    "GurumukhiLys": "GurumukhiLys-020-Condensed"
+}
+
+LEGACY_FONTS = {
+    "Asees", "AnmolLipi", "Anmol Lipi", "Joy", "GurbaniLipi", 
+    "Satluj", "AmritLipi", "AmarLipi", "GurumukhiLys", 
+    "GurumukhiLys-020-Condensed", "Gurmukhi Lys"
+}
+
+def split_gurmukhi_segments(text):
+    """
+    Split text into segments of Gurmukhi Unicode characters and other characters (English/spaces/numbers).
+    Returns a list of tuples: (is_gurmukhi, segment_text)
+    """
+    if not text:
+        return []
+    
+    segments = []
+    current_segment = []
+    # Check if first character is in the Gurmukhi block
+    is_gur = ('\u0A00' <= text[0] <= '\u0A7F')
+    
+    for char in text:
+        char_is_gur = ('\u0A00' <= char <= '\u0A7F')
+        
+        if char_is_gur == is_gur:
+            current_segment.append(char)
+        else:
+            segments.append((is_gur, "".join(current_segment)))
+            is_gur = char_is_gur
+            current_segment = [char]
+            
+    if current_segment:
+        segments.append((is_gur, "".join(current_segment)))
+        
+    return segments

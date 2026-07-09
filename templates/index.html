@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ਸੁਰ-ਲਿਖੀ - Voice Typing & OCR Studio</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Top Branding Header -->
+    <header class="studio-top-bar">
+        <div class="header-left">
+            <i class="fa-solid fa-microphone-lines header-icon"></i>
+            <h1>ਸੁਰ-ਲਿਖੀ <span class="header-subtitle">Voice Typing & OCR Studio</span></h1>
+        </div>
+        <div class="header-right" style="display: flex; align-items: center; gap: 12px;">
+            <span class="user-credit"><i class="fa-solid fa-user-shield"></i> Amanpreet Singh , DTS Ferozepur</span>
+            <button id="settingsBtnTop" class="btn btn-icon-gear" title="Gemini API Key Settings" style="padding: 6px 12px; border-radius: 20px;"><i class="fa-solid fa-gear"></i> Settings</button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Content -->
+    <div class="studio-main-content">
+        <!-- Top Toolbar Header -->
+        <header class="studio-header">
+            <div class="toolbar-row">
+                <!-- Voice Controls Group -->
+                <div class="toolbar-group">
+                    <button id="startBtn" class="btn btn-success"><i class="fa-solid fa-microphone"></i> Start</button>
+                    <button id="stopBtn" class="btn btn-danger" disabled><i class="fa-solid fa-stop"></i> Stop</button>
+                    <button id="pauseBtn" class="btn btn-warning" disabled><i class="fa-solid fa-pause"></i> Pause</button>
+                </div>
+
+                <!-- Voice Language Selector -->
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Voice:</span>
+                    <select id="voiceLang" class="form-select">
+                        <option value="pa-IN">Punjabi (Gurmukhi)</option>
+                        <option value="hi-IN">Hindi</option>
+                        <option value="en-US">English</option>
+                    </select>
+                </div>
+
+                <div class="vertical-separator"></div>
+
+                <!-- File Upload Action -->
+                <div class="toolbar-group">
+                    <button id="uploadBtn" class="btn btn-primary"><i class="fa-solid fa-cloud-arrow-up"></i> Upload</button>
+                    <input type="file" id="fileInput" accept=".pdf,.docx,.png,.jpg,.jpeg" style="display:none;">
+                    <button id="cameraBtn" class="btn btn-secondary"><i class="fa-solid fa-camera"></i> Camera</button>
+                </div>
+
+                <div class="vertical-separator"></div>
+
+                <!-- Font Converter Settings -->
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Src Font:</span>
+                    <select id="sourceFont" class="form-select w-auto-select">
+                        <option value="auto">Auto Detect</option>
+                        <option value="Unicode">Unicode (Raavi)</option>
+                        <option value="AnmolLipi">Anmol Lipi</option>
+                        <option value="Asees">Asees</option>
+                        <option value="GurumukhiLys">Gurumukhi Lys</option>
+                    </select>
+
+                    <span class="toolbar-label ml-2">Tgt Font:</span>
+                    <select id="targetFont" class="form-select w-auto-select">
+                        {% for family in font_families %}
+                        <option value="{{ DROPDOWN_TO_CONVERTER[family] }}">{{ family }}</option>
+                        {% endfor %}
+                    </select>
+                    <button id="convertBtn" class="btn btn-dark"><i class="fa-solid fa-arrow-right-arrow-left"></i> Convert</button>
+                </div>
+
+                <!-- Auto Convert Toggle Switch -->
+                <div class="toolbar-group">
+                    <label class="switch-container">
+                        <input type="checkbox" id="autoConvertToggle" checked>
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="toolbar-label ml-2">Auto Convert</span>
+                </div>
+
+                <div class="flex-grow"></div>
+            </div>
+
+            <div class="toolbar-row row-second">
+                <!-- Translation Lang Selectors -->
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Src:</span>
+                    <select id="translateSrc" class="form-select w-auto-select">
+                        <option value="auto">Auto Detect</option>
+                        <option value="pa">Punjabi</option>
+                        <option value="hi">Hindi</option>
+                        <option value="en">English</option>
+                    </select>
+                    
+                    <span class="toolbar-label ml-3">Tgt:</span>
+                    <select id="destLang" class="form-select w-auto-select">
+                        <option value="en">English</option>
+                        <option value="pa">Punjabi</option>
+                        <option value="hi">Hindi</option>
+                        <option value="ur">Urdu</option>
+                        <option value="bn">Bengali</option>
+                        <option value="gu">Gujarati</option>
+                        <option value="mr">Marathi</option>
+                        <option value="ta">Tamil</option>
+                        <option value="te">Telugu</option>
+                    </select>
+                    
+                    <button id="translateBtn" class="btn btn-translate-green"><i class="fa-solid fa-file-invoice"></i> Translate</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Camera Panel (Hidden by default) -->
+        <div id="cameraContainer" style="display:none;" class="camera-floating-card">
+            <div class="camera-header">
+                <h4>Document Camera Scanner</h4>
+                <button id="closeCamBtn" class="btn-close-cam">&times;</button>
+            </div>
+            <video id="video" autoplay playsinline></video>
+            <div class="camera-footer">
+                <button id="captureBtn" class="btn btn-success"><i class="fa-solid fa-circle-dot"></i> Capture Document</button>
+            </div>
+        </div>
+
+        <!-- Status Banner Box -->
+        <div class="status-banner-bar">
+            <div class="status-left" id="statusBar">
+                <i class="fa-solid fa-circle-check text-success"></i> <span id="statusMessage">Ready and Online</span>
+            </div>
+            <div class="status-right warning-banner">
+                <i class="fa-solid fa-triangle-exclamation"></i> Install fonts for proper display
+            </div>
+        </div>
+
+        <!-- DOCX Download Area -->
+        <div id="docxConvertContainer" class="docx-banner-area"></div>
+
+        <!-- Side-by-side Workspace -->
+        <div class="studio-workspace">
+            <!-- Source Column -->
+            <div class="workspace-column">
+                <div class="column-header">
+                    <h3><i class="fa-regular fa-file-lines"></i> Source Text</h3>
+                </div>
+                <textarea id="sourceText" placeholder="Voice dictation, uploaded documents, or typed text appears here..."></textarea>
+                <div class="column-footer">
+                    <button id="copySrcBtn" class="btn btn-light-outline"><i class="fa-regular fa-copy"></i> Copy Source</button>
+                    <button id="clearBtn" class="btn btn-light-outline-danger"><i class="fa-regular fa-trash-can"></i> Clear Input</button>
+                </div>
+            </div>
+
+            <!-- Output Column -->
+            <div class="workspace-column">
+                <div class="column-header">
+                    <h3><i class="fa-regular fa-file-code"></i> Output</h3>
+                </div>
+                <div id="convertedText" class="rich-textarea" contenteditable="true" placeholder="Converted text in target font appears here..."></div>
+                <div class="column-footer">
+                    <button id="copyConvBtn" class="btn btn-light-outline"><i class="fa-regular fa-copy"></i> Copy Output</button>
+                    <button id="exportBtn" class="btn btn-light-outline"><i class="fa-solid fa-file-export"></i> Export TXT</button>
+                    <button id="exportDocBtn" class="btn btn-light-outline-success"><i class="fa-solid fa-file-word"></i> Export DOC</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Settings Modal for Gemini API Key -->
+<div id="settingsModal" class="modal-overlay" style="display: none;">
+    <div class="modal-window">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-brain"></i> Free Gemini AI Translation Settings</h3>
+            <button id="closeSettingsBtn" class="btn-close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="margin-bottom: 12px; line-height: 1.5;">To enable <strong>Professional Police/Court translation</strong> (using correct legal terminology) and layout-preserving handwritten OCR, configure a Gemini API Key.</p>
+            
+            <div class="free-key-banner">
+                <i class="fa-solid fa-gift"></i>
+                <div>
+                    <strong>The key is 100% FREE to get.</strong>
+                    <a href="https://aistudio.google.com/" target="_blank" class="free-key-link">Click here to get your Free Gemini Key <i class="fa-solid fa-up-right-from-square"></i></a>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 16px;">
+                <label for="apiKeyInput">Gemini API Key</label>
+                <div class="pwd-wrapper">
+                    <input type="password" id="apiKeyInput" placeholder="Paste your API key here (starts with AIzaSy...)" autocomplete="off">
+                    <button id="toggleApiKeyVisibility" class="btn-toggle-view"><i class="fa-regular fa-eye"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="clearApiKeyBtn" class="btn btn-secondary">Remove Key</button>
+            <button id="saveApiKeyBtn" class="btn btn-success">Save Key</button>
+        </div>
+    </div>
+</div>
+
+<!-- Custom JS -->
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
