@@ -56,7 +56,7 @@ POPPLER_PATH = find_poppler()
 if POPPLER_PATH:
     print(f"✅ Poppler: {POPPLER_PATH}")
 else:
-    print("❌ Poppler not found. PDF OCR will fail.")
+    print("ℹ️ Local Poppler not found (Gemini Cloud OCR will be used for PDF files).")
 
 # ---------- Tesseract path detection ----------
 def find_tesseract():
@@ -80,7 +80,7 @@ if TESSERACT_PATH:
     if TESSERACT_PATH != 'tesseract':
         pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
 else:
-    print("❌ Tesseract not found. OCR will fail.")
+    print("ℹ️ Local Tesseract not found (Gemini Cloud OCR will be used for Image files).")
 
 # ---------- Gemini API OCR Function ----------
 def ocr_via_gemini(file_bytes: bytes, mime_type: str, api_key: str) -> str:
