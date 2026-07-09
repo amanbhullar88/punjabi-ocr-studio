@@ -213,10 +213,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
         recognition.onerror = function(event) {
             console.error('Speech error:', event.error);
-            if (event.error !== 'no-speech') {
-                updateStatus(`❌ Error: ${event.error}`, 'danger');
-                stopListening();
+            let userMsg = event.error;
+            if (event.error === 'not-allowed') {
+                userMsg = 'Microphone access blocked. Please allow mic in settings.';
+                alert('Microphone Access Blocked:\nPlease go to your iPhone Settings > Safari > Microphone, and change it to "Allow".');
+            } else if (event.error === 'service-not-allowed') {
+                userMsg = 'Dictation disabled. Please enable it in keyboard settings.';
+                alert('iOS Dictation Disabled:\nPlease go to your iPhone Settings > General > Keyboard, scroll to the bottom, and turn ON "Enable Dictation".');
             }
+            updateStatus(`❌ Error: ${userMsg}`, 'danger');
+            
+            // Safe manual stop without wiping error message
+            if (recognition) {
+                try { recognition.stop(); } catch(e) {}
+                recognition = null;
+            }
+            isListening = false;
+            isPaused = false;
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            pauseBtn.disabled = true;
+            pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
         };
 
         recognition.onend = function() {
