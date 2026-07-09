@@ -180,8 +180,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         recognition = new SpeechRecognition();
         recognition.lang = voiceLang.value;
-        recognition.continuous = true;
-        recognition.interimResults = true;
+        
+        // Detect iOS devices (iPhone, iPad, iPod)
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        
+        if (isIOS) {
+            recognition.continuous = false; // iOS Safari fails with service-not-allowed if continuous is true!
+            recognition.interimResults = true;
+        } else {
+            recognition.continuous = true;
+            recognition.interimResults = true;
+        }
 
         recognition.onstart = function() {
             isListening = true;
