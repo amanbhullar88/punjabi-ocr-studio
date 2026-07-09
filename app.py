@@ -170,8 +170,8 @@ def upload_file():
     file_bytes = file.read()
     filename = secure_filename(file.filename)
 
-    # Check for Gemini API key in custom header or request body
-    gemini_key = request.headers.get('X-Gemini-API-Key') or request.form.get('api_key')
+    # Check for Gemini API key in custom header, request body, or server environment variables
+    gemini_key = request.headers.get('X-Gemini-API-Key') or request.form.get('api_key') or os.environ.get('GEMINI_API_KEY')
 
     try:
         # Advanced OCR with Gemini (if API Key provided and file is PDF/Image)
@@ -185,8 +185,10 @@ def upload_file():
                     'ocr_engine': 'gemini'
                 })
             except Exception as gemini_err:
-                print(f"⚠️ Gemini OCR failed, falling back to local OCR: {gemini_err}")
-                # continue to local fallback
+                print(f"⚠️ Gemini OCR failed: {gemini_err}")
+                if POPPLER_PATH is None or TESSERACT_PATH is None:
+                    return jsonify({'error': f"Gemini AI Error: {str(gemini_err)}. Please verify your Gemini API key in Settings (top right) or Render configuration."}), 500
+                # continue to local fallback for local development
 
         if ext == 'docx':
             doc = Document(io.BytesIO(file_bytes))
@@ -704,8 +706,8 @@ def translate():
     src = data.get('src', 'auto')
     dest = data.get('dest', 'en')
     
-    # Check if header contains Gemini Key
-    gemini_key = request.headers.get('X-Gemini-API-Key')
+    # Check if header contains Gemini Key or server environment variables
+    gemini_key = request.headers.get('X-Gemini-API-Key') or os.environ.get('GEMINI_API_KEY')
     
     if not text:
         return jsonify({'translation': ''})
