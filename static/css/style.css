@@ -687,3 +687,143 @@ input:checked + .slider:before {
 .free-key-link:hover {
     color: #7dd3fc;
 }
+
+/* ----------------------------------------------------
+   Mobile Responsiveness (max-width: 768px)
+------------------------------------------------------- */
+@media (max-width: 768px) {
+    /* 1. Body and Container */
+    body {
+        height: auto;
+        overflow-y: auto;
+    }
+    
+    .app-container {
+        height: auto;
+    }
+    
+    .studio-main-content {
+        height: auto;
+        padding: 10px;
+        overflow: visible;
+    }
+
+    /* 2. Top Bar Header Layout */
+    .studio-top-bar {
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        text-align: center;
+        padding: 15px 10px;
+    }
+    
+    .header-left h1 {
+        font-size: 18px;
+    }
+    
+    .header-right {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .user-credit {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+
+    /* 3. Control Panel Toolbar */
+    .studio-header {
+        padding: 10px;
+    }
+
+    .toolbar-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .toolbar-row.row-second {
+        margin-top: 8px;
+        padding-top: 8px;
+    }
+
+    .toolbar-group {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 6px;
+    }
+    
+    .toolbar-group > * {
+        flex-grow: 1;
+    }
+    
+    .form-select, .form-control {
+        width: 100% !important;
+        max-width: none !important;
+    }
+    
+    .w-auto-select {
+        width: auto !important;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 10px;
+        font-size: 13px;
+    }
+    
+    /* Make Translate button big and full width */
+    #translateBtn {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 14px !important;
+    }
+    
+    .vertical-separator {
+        display: none;
+    }
+
+    /* 4. Status Bar and Warnings */
+    .status-banner-bar {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+        text-align: center;
+    }
+    
+    .status-left {
+        justify-content: center;
+    }
+    
+    .warning-banner {
+        justify-content: center;
+        width: 100%;
+    }
+
+    /* 5. Workspace Columns (Stack them vertically!) */
+    .studio-workspace {
+        flex-direction: column;
+        height: auto;
+        gap: 16px;
+    }
+    
+    .workspace-column {
+        width: 100%;
+        height: auto;
+        min-height: 380px;
+    }
+    
+    .workspace-column textarea, .rich-textarea {
+        min-height: 280px !important;
+        height: 280px !important;
+    }
+    
+    .column-footer {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
