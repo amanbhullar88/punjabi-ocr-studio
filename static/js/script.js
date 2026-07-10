@@ -825,4 +825,24 @@ document.addEventListener('DOMContentLoaded', function() {
         sourceColumn.classList.add('active-tab');
         outputColumn.classList.remove('active-tab');
     }
+
+    // ---------- Mobile Settings Toggle Drawer ----------
+    const mobileSettingsToggleBtn = document.getElementById('mobileSettingsToggleBtn');
+    const mobileSettingsDrawer = document.getElementById('mobileSettingsDrawer');
+
+    if (mobileSettingsToggleBtn && mobileSettingsDrawer) {
+        mobileSettingsToggleBtn.addEventListener('click', function() {
+            mobileSettingsDrawer.classList.toggle('open');
+            mobileSettingsToggleBtn.classList.toggle('active');
+            
+            const icon = mobileSettingsToggleBtn.querySelector('i');
+            if (icon) {
+                if (mobileSettingsDrawer.classList.contains('open')) {
+                    icon.className = 'fa-solid fa-chevron-up';
+                } else {
+                    icon.className = 'fa-solid fa-sliders';
+                }
+            }
+        });
+    }
 });
