@@ -205,30 +205,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const pauseBtn = document.getElementById('pauseBtn');
     const voiceLang = document.getElementById('voiceLang');
 
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+
+    if (!SpeechRecognition) {
         updateStatus('⚠️ Speech recognition not supported in this browser.', 'warning');
         startBtn.disabled = true;
-    }
-
-    startBtn.addEventListener('click', function() {
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            alert('Speech recognition not supported in this browser. Please use Safari on iOS.');
-            return;
-        }
-        
+    } else {
         try {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
-            recognition.lang = voiceLang.value;
+            recognition.continuous = !isIOS;
+            recognition.interimResults = true;
             
-            if (isIOS) {
-                recognition.continuous = false; // iOS Safari fails with service-not-allowed if continuous is true!
-                recognition.interimResults = true;
-            } else {
-                recognition.continuous = true;
-                recognition.interimResults = true;
-            }
-
             recognition.onstart = function() {
                 isListening = true;
                 isPaused = false;
@@ -265,22 +253,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('Microphone Access Blocked:\nPlease go to your iPhone Settings > Safari > Microphone, and change it to "Allow".');
                 } else if (event.error === 'service-not-allowed') {
                     userMsg = 'iOS Speech Recognition Service Not Allowed.';
-                    alert('iPhone Speech Recognition Limitation:\n\nApple often restricts browser-based speech recognition on iOS.\n\nTo speak and type in Punjabi with 100% accuracy:\n1. Tap inside the "Source Text" input box to open the keyboard.\n2. Tap the Microphone icon on the bottom-right of your iPhone virtual keyboard.\n3. Speak in Punjabi/Hindi, and your iPhone will type it directly.');
+                    // Update status bar quietly instead of showing a blocking alert modal on iPhone
+                    updateStatus('⚠️ iOS dictation blocked. Tap input box and use keyboard mic.', 'warning');
+                    stopListening();
+                    return;
                 } else {
                     updateStatus(`❌ Error: ${userMsg}`, 'danger');
                 }
-                
-                // Safe manual stop without wiping error message
-                if (recognition) {
-                    try { recognition.stop(); } catch(e) {}
-                    recognition = null;
-                }
-                isListening = false;
-                isPaused = false;
-                startBtn.disabled = false;
-                stopBtn.disabled = true;
-                pauseBtn.disabled = true;
-                pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+                stopListening();
             };
 
             recognition.onend = function() {
@@ -296,24 +276,32 @@ document.addEventListener('DOMContentLoaded', function() {
                     stopListening();
                 }
             };
+        } catch (initErr) {
+            console.error('Failed to initialize SpeechRecognition:', initErr);
+        }
+    }
 
+    startBtn.addEventListener('click', function() {
+        if (!recognition) {
+            alert('Speech recognition not supported in this browser. Please use Safari on iOS.');
+            return;
+        }
+        
+        try {
+            recognition.lang = voiceLang.value;
             recognition.start();
         } catch (err) {
-            console.error('Speech Recognition Initialization Error:', err);
-            alert('Speech Recognition could not be started: ' + err.message);
-            updateStatus(`❌ Error: ${err.message}`, 'danger');
-            isListening = false;
-            isPaused = false;
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-            pauseBtn.disabled = true;
+            console.error('Speech Recognition start error:', err);
+            if (!err.message.includes('already started')) {
+                updateStatus(`❌ Error: ${err.message}`, 'danger');
+                stopListening();
+            }
         }
     });
 
     function stopListening() {
         if (recognition) {
-            recognition.stop();
-            recognition = null;
+            try { recognition.stop(); } catch(e) {}
         }
         isListening = false;
         isPaused = false;
