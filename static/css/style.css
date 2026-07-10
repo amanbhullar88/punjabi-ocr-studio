@@ -688,72 +688,85 @@ input:checked + .slider:before {
     color: #7dd3fc;
 }
 
+/* Mobile tab bar - hidden on desktop */
+.mobile-tabs-bar {
+    display: none;
+}
+.mobile-tab-btn {
+    display: none;
+}
+
 /* ----------------------------------------------------
    Mobile Responsiveness (max-width: 768px)
 ------------------------------------------------------- */
 @media (max-width: 768px) {
-    /* 1. Body and Container */
+    /* 1. Body and Container (Fixed native app layout) */
     body {
-        height: auto;
-        overflow-y: auto;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
     }
     
     .app-container {
-        height: auto;
+        height: 100vh;
+        height: 100dvh;
     }
     
     .studio-main-content {
-        height: auto;
+        flex-grow: 1;
         padding: 10px;
-        overflow: visible;
+        overflow: hidden;
     }
 
     /* 2. Top Bar Header Layout */
     .studio-top-bar {
         flex-direction: column;
-        gap: 12px;
+        gap: 8px;
         align-items: center;
         text-align: center;
-        padding: 15px 10px;
+        padding: 10px;
     }
     
     .header-left h1 {
-        font-size: 18px;
+        font-size: 16px;
     }
     
     .header-right {
         width: 100%;
         justify-content: center;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
     }
 
     .user-credit {
-        font-size: 13px;
-        padding: 6px 12px;
+        font-size: 12px;
+        padding: 4px 10px;
     }
 
-    /* 3. Control Panel Toolbar */
+    /* 3. Control Panel Toolbar (Scrollable horizontally if too wide) */
     .studio-header {
-        padding: 10px;
+        padding: 8px;
+        margin-bottom: 8px;
+        max-height: 140px;
+        overflow-y: auto;
     }
 
     .toolbar-row {
         flex-direction: column;
         align-items: stretch;
-        gap: 8px;
+        gap: 6px;
     }
 
     .toolbar-row.row-second {
-        margin-top: 8px;
-        padding-top: 8px;
+        margin-top: 6px;
+        padding-top: 6px;
     }
 
     .toolbar-group {
         width: 100%;
         flex-wrap: wrap;
         justify-content: space-between;
-        gap: 6px;
+        gap: 4px;
     }
     
     .toolbar-group > * {
@@ -772,15 +785,14 @@ input:checked + .slider:before {
     .btn {
         width: 100%;
         justify-content: center;
-        padding: 10px;
-        font-size: 13px;
+        padding: 8px;
+        font-size: 12px;
     }
     
-    /* Make Translate button big and full width */
     #translateBtn {
         width: 100% !important;
-        padding: 12px !important;
-        font-size: 14px !important;
+        padding: 10px !important;
+        font-size: 13px !important;
     }
     
     .vertical-separator {
@@ -790,9 +802,10 @@ input:checked + .slider:before {
     /* 4. Status Bar and Warnings */
     .status-banner-bar {
         flex-direction: column;
-        gap: 10px;
-        align-items: stretch;
-        text-align: center;
+        gap: 6px;
+        padding: 6px 10px;
+        margin-bottom: 8px;
+        font-size: 12px;
     }
     
     .status-left {
@@ -804,26 +817,78 @@ input:checked + .slider:before {
         width: 100%;
     }
 
-    /* 5. Workspace Columns (Stack them vertically!) */
+    /* 5. Mobile Tabs Navigation Bar */
+    .mobile-tabs-bar {
+        display: flex;
+        background-color: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    
+    .mobile-tab-btn {
+        display: flex;
+        flex: 1;
+        padding: 10px;
+        border: none;
+        background: transparent;
+        color: #94a3b8;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+    }
+    
+    .mobile-tab-btn.active {
+        background-color: #334155;
+        color: #38bdf8;
+        border-bottom: 2px solid #38bdf8;
+    }
+
+    /* 6. Workspace Tabs Toggling & Internal Scroll */
     .studio-workspace {
-        flex-direction: column;
+        flex-grow: 1;
+        flex-direction: row;
+        gap: 0;
         height: auto;
-        gap: 16px;
+        min-height: 0;
+        overflow: hidden;
     }
     
     .workspace-column {
-        width: 100%;
-        height: auto;
-        min-height: 380px;
+        display: none !important;
+        width: 100% !important;
+        height: 100% !important;
+        flex: 1;
+        padding: 10px;
+    }
+    
+    .workspace-column.active-tab {
+        display: flex !important;
     }
     
     .workspace-column textarea, .rich-textarea {
-        min-height: 280px !important;
-        height: 280px !important;
+        flex-grow: 1;
+        height: 100% !important;
+        min-height: 0 !important;
+        overflow-y: auto;
     }
     
     .column-footer {
-        flex-direction: column;
-        gap: 8px;
+        flex-direction: row;
+        gap: 6px;
+        margin-top: 8px;
+        flex-shrink: 0;
+    }
+
+    .column-footer .btn {
+        padding: 6px;
+        font-size: 11px;
     }
 }
