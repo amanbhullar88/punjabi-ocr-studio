@@ -695,6 +695,12 @@ input:checked + .slider:before {
 .mobile-tab-btn {
     display: none;
 }
+.mobile-settings-drawer {
+    display: contents;
+}
+.mobile-settings-toggle {
+    display: none;
+}
 
 /* ----------------------------------------------------
    Mobile Responsiveness (max-width: 768px)
@@ -824,6 +830,8 @@ input:checked + .slider:before {
         padding: 6px 10px;
         margin-bottom: 6px;
         font-size: 11px;
+        max-height: 50px;
+        overflow-y: auto;
     }
     
     .status-left {
@@ -833,6 +841,37 @@ input:checked + .slider:before {
     .warning-banner {
         justify-content: flex-end;
         width: auto;
+    }
+
+    /* 4b. Mobile Settings Drawer Styling */
+    .mobile-settings-toggle {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: auto !important;
+    }
+    
+    .mobile-settings-drawer {
+        display: flex;
+        flex-direction: column;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        width: 100%;
+        gap: 6px;
+    }
+    
+    .mobile-settings-drawer.open {
+        max-height: 350px;
+        margin-top: 6px;
+        padding-top: 6px;
+        border-top: 1px solid #334155;
+    }
+    
+    .drawer-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 6px;
     }
 
     /* 5. Mobile Tabs Navigation Bar */
