@@ -206,7 +206,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const voiceLang = document.getElementById('voiceLang');
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    let recognition = null;
 
     if (!SpeechRecognition) {
         updateStatus('⚠️ Speech recognition not supported in this browser.', 'warning');
