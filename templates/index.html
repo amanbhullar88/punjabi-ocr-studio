@@ -31,6 +31,7 @@
     <!-- Main Workspace Content -->
     <div class="studio-main-content">
         <!-- Top Toolbar Header -->
+        <!-- Top Toolbar Header -->
         <header class="studio-header">
             <div class="toolbar-row">
                 <!-- Voice Controls Group -->
@@ -50,8 +51,6 @@
                     </select>
                 </div>
 
-                <div class="vertical-separator"></div>
-
                 <!-- File Upload Action -->
                 <div class="toolbar-group">
                     <button id="uploadBtn" class="btn btn-primary"><i class="fa-solid fa-cloud-arrow-up"></i> Upload</button>
@@ -59,65 +58,68 @@
                     <button id="cameraBtn" class="btn btn-secondary"><i class="fa-solid fa-camera"></i> Camera</button>
                 </div>
 
-                <div class="vertical-separator"></div>
-
-                <!-- Font Converter Settings -->
-                <div class="toolbar-group">
-                    <span class="toolbar-label">Src Font:</span>
-                    <select id="sourceFont" class="form-select w-auto-select">
-                        <option value="auto">Auto Detect</option>
-                        <option value="Unicode">Unicode (Raavi)</option>
-                        <option value="AnmolLipi">Anmol Lipi</option>
-                        <option value="Asees">Asees</option>
-                        <option value="GurumukhiLys">Gurumukhi Lys</option>
-                    </select>
-
-                    <span class="toolbar-label ml-2">Tgt Font:</span>
-                    <select id="targetFont" class="form-select w-auto-select">
-                        {% for family in font_families %}
-                        <option value="{{ DROPDOWN_TO_CONVERTER[family] }}">{{ family }}</option>
-                        {% endfor %}
-                    </select>
-                    <button id="convertBtn" class="btn btn-dark"><i class="fa-solid fa-arrow-right-arrow-left"></i> Convert</button>
-                </div>
-
-                <!-- Auto Convert Toggle Switch -->
-                <div class="toolbar-group">
-                    <label class="switch-container">
-                        <input type="checkbox" id="autoConvertToggle" checked>
-                        <span class="slider round"></span>
-                    </label>
-                    <span class="toolbar-label ml-2">Auto Convert</span>
-                </div>
-
-                <div class="flex-grow"></div>
+                <button id="mobileSettingsToggleBtn" class="btn btn-dark mobile-settings-toggle"><i class="fa-solid fa-sliders"></i> Tools</button>
             </div>
 
-            <div class="toolbar-row row-second">
-                <!-- Translation Lang Selectors -->
-                <div class="toolbar-group">
-                    <span class="toolbar-label">Src:</span>
-                    <select id="translateSrc" class="form-select w-auto-select">
-                        <option value="auto">Auto Detect</option>
-                        <option value="pa">Punjabi</option>
-                        <option value="hi">Hindi</option>
-                        <option value="en">English</option>
-                    </select>
-                    
-                    <span class="toolbar-label ml-3">Tgt:</span>
-                    <select id="destLang" class="form-select w-auto-select">
-                        <option value="en">English</option>
-                        <option value="pa">Punjabi</option>
-                        <option value="hi">Hindi</option>
-                        <option value="ur">Urdu</option>
-                        <option value="bn">Bengali</option>
-                        <option value="gu">Gujarati</option>
-                        <option value="mr">Marathi</option>
-                        <option value="ta">Tamil</option>
-                        <option value="te">Telugu</option>
-                    </select>
-                    
-                    <button id="translateBtn" class="btn btn-translate-green"><i class="fa-solid fa-file-invoice"></i> Translate</button>
+            <!-- Collapsible drawer for advanced Font and Translation tools -->
+            <div class="mobile-settings-drawer" id="mobileSettingsDrawer">
+                <div class="toolbar-row drawer-row">
+                    <!-- Font Converter Settings -->
+                    <div class="toolbar-group">
+                        <span class="toolbar-label">Src Font:</span>
+                        <select id="sourceFont" class="form-select w-auto-select">
+                            <option value="auto">Auto Detect</option>
+                            <option value="Unicode">Unicode (Raavi)</option>
+                            <option value="AnmolLipi">Anmol Lipi</option>
+                            <option value="Asees">Asees</option>
+                            <option value="GurumukhiLys">Gurumukhi Lys</option>
+                        </select>
+
+                        <span class="toolbar-label ml-2">Tgt Font:</span>
+                        <select id="targetFont" class="form-select w-auto-select">
+                            {% for family in font_families %}
+                            <option value="{{ DROPDOWN_TO_CONVERTER[family] }}">{{ family }}</option>
+                            {% endfor %}
+                        </select>
+                        <button id="convertBtn" class="btn btn-dark"><i class="fa-solid fa-arrow-right-arrow-left"></i> Convert</button>
+                    </div>
+
+                    <!-- Auto Convert Toggle Switch -->
+                    <div class="toolbar-group">
+                        <label class="switch-container">
+                            <input type="checkbox" id="autoConvertToggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="toolbar-label ml-2">Auto Convert</span>
+                    </div>
+                </div>
+
+                <div class="toolbar-row drawer-row">
+                    <!-- Translation Lang Selectors -->
+                    <div class="toolbar-group">
+                        <span class="toolbar-label">Src:</span>
+                        <select id="translateSrc" class="form-select w-auto-select">
+                            <option value="auto">Auto Detect</option>
+                            <option value="pa">Punjabi</option>
+                            <option value="hi">Hindi</option>
+                            <option value="en">English</option>
+                        </select>
+                        
+                        <span class="toolbar-label ml-3">Tgt:</span>
+                        <select id="destLang" class="form-select w-auto-select">
+                            <option value="en">English</option>
+                            <option value="pa">Punjabi</option>
+                            <option value="hi">Hindi</option>
+                            <option value="ur">Urdu</option>
+                            <option value="bn">Bengali</option>
+                            <option value="gu">Gujarati</option>
+                            <option value="mr">Marathi</option>
+                            <option value="ta">Tamil</option>
+                            <option value="te">Telugu</option>
+                        </select>
+                        
+                        <button id="translateBtn" class="btn btn-translate-green"><i class="fa-solid fa-file-invoice"></i> Translate</button>
+                    </div>
                 </div>
             </div>
         </header>
