@@ -13,11 +13,39 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load API Key
     let geminiApiKey = localStorage.getItem('gemini_api_key') || '';
     apiKeyInput.value = geminiApiKey;
+    let serverHasApiKey = false;
+
+    // Check if server has API key configured
+    fetch('/has_api_key')
+        .then(res => res.json())
+        .then(data => {
+            serverHasApiKey = !!data.has_key;
+            updateSettingsUI();
+        })
+        .catch(err => console.error('Error checking server API key:', err));
+
+    function updateSettingsUI() {
+        const keyStatusBanner = document.getElementById('keyStatusBanner');
+        if (keyStatusBanner) {
+            keyStatusBanner.style.display = 'block';
+            if (geminiApiKey) {
+                keyStatusBanner.innerHTML = '🟢 Custom browser API Key is active (Overrides server key).';
+                keyStatusBanner.style.color = '#34d399';
+            } else if (serverHasApiKey) {
+                keyStatusBanner.innerHTML = '🔵 Pre-configured Server API Key is active (No setup required).';
+                keyStatusBanner.style.color = '#38bdf8';
+            } else {
+                keyStatusBanner.innerHTML = '🟡 No API Key configured. Paste a key below to enable Gemini AI OCR.';
+                keyStatusBanner.style.color = '#fbbf24';
+            }
+        }
+    }
 
     // Modal Events
     function openModal() {
         settingsModal.style.display = 'flex';
         apiKeyInput.value = localStorage.getItem('gemini_api_key') || '';
+        updateSettingsUI();
     }
     function closeModal() {
         settingsModal.style.display = 'none';
@@ -42,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
             geminiApiKey = '';
             showStatus('ℹ️ Key cleared', 'info');
         }
+        updateSettingsUI();
         closeModal();
     });
 
@@ -50,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
         geminiApiKey = '';
         apiKeyInput.value = '';
         showStatus('🗑️ Gemini API Key removed.', 'info');
+        updateSettingsUI();
         closeModal();
     });
 
@@ -382,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData();
         formData.append('file', file);
 
-        let statusMsg = geminiApiKey 
+        let statusMsg = (geminiApiKey || serverHasApiKey) 
             ? `📤 Loaded: ${file.name} (Running Gemini AI OCR...)`
             : `📤 Loaded: ${file.name} (Running offline OCR...)`;
         
