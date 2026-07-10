@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('Microphone Access Blocked:\nPlease go to your iPhone Settings > Safari > Microphone, and change it to "Allow".');
                 } else if (event.error === 'service-not-allowed') {
                     userMsg = 'iOS Speech Recognition Service Not Allowed.';
-                    alert('iOS Speech Recognition Error:\n\n1. Ensure you are using the native SAFARI browser on iPhone. (Chrome, Firefox, or inside apps like WhatsApp/Facebook on iOS do NOT support Speech Recognition and will always fail with this error).\n2. If already using Safari, try closing other tabs or apps using the microphone.\n3. Make sure Siri is not actively listening.\n4. Try restarting Safari.');
+                    alert('iOS Speech Recognition Error:\n\n1. Use native SAFARI browser on iPhone (not Chrome/Firefox or inside WhatsApp/Facebook).\n2. Language Files: If you selected Punjabi or Hindi, iOS might not have the dictation files downloaded. Switch the "Voice" dropdown in the app to "English" and click Start to test if the microphone works.\n3. Add Keyboard: Ensure the Punjabi (Gurmukhi) keyboard is added in your iPhone Settings > General > Keyboard > Keyboards.');
                 } else {
                     updateStatus(`❌ Error: ${userMsg}`, 'danger');
                 }
