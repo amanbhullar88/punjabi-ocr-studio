@@ -750,20 +750,27 @@ def translate():
                 text = convert_mixed_legacy_to_unicode(text, detected, conv)
         
         # Step 2: Perform translation
+        translated = None
         if gemini_key:
-            # Map abbreviations to full names for Gemini prompt context
-            lang_names = {
-                'pa': 'Punjabi',
-                'hi': 'Hindi',
-                'en': 'English',
-                'ur': 'Urdu',
-                'auto': 'Auto Detect'
-            }
-            src_name = lang_names.get(src, 'Auto-Detected Language')
-            dest_name = lang_names.get(dest, 'English')
-            
-            translated = translate_via_gemini(text, src_name, dest_name, gemini_key)
-        else:
+            try:
+                # Map abbreviations to full names for Gemini prompt context
+                lang_names = {
+                    'pa': 'Punjabi',
+                    'hi': 'Hindi',
+                    'en': 'English',
+                    'ur': 'Urdu',
+                    'auto': 'Auto Detect'
+                }
+                src_name = lang_names.get(src, 'Auto-Detected Language')
+                dest_name = lang_names.get(dest, 'English')
+                
+                translated = translate_via_gemini(text, src_name, dest_name, gemini_key)
+            except Exception as gemini_err:
+                print(f"⚠️ Gemini Translation failed: {gemini_err}. Falling back to Google Free Translation...")
+                # Continue to Google Translate fallback below
+                pass
+                
+        if not translated:
             raw_translation = translate_via_google_free(text, src, dest)
             translated = post_process_legal_translation(raw_translation)
             
