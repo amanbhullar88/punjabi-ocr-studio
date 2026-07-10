@@ -48,9 +48,14 @@ def is_gurmukhi_unicode(text):
     return any('\u0A00' <= c <= '\u0A7F' for c in text)
 
 def detect_legacy_font(text):
-    if any(x in text for x in ["syvw", "iProzpUr", "lyb", "pulIs", "mJy", "Awp"]):
-        return "Asees"
-    return "AnmolLipi"
+    # Common words in Anmol Lipi layout
+    anmol_words = [
+        "syvw", "iProzpUr", "lyb", "pulIs", "mJy", "Awp", 
+        "sRImwn", "bynqI", "AMdr", "hY", "ik", "ijlw", "iemwrq"
+    ]
+    if any(x in text for x in anmol_words):
+        return "AnmolLipi"
+    return "Asees"
 
 WORD_FONT_MAP = {
     "Unicode": "Raavi",
