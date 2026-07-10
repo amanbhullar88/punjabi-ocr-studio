@@ -156,6 +156,11 @@ def index():
                            font_families=list(FONT_FAMILY_MAP.keys()),
                            DROPDOWN_TO_CONVERTER=DROPDOWN_TO_CONVERTER)
 
+@app.route('/has_api_key', methods=['GET'])
+def has_api_key():
+    has_key = bool(os.environ.get('GEMINI_API_KEY'))
+    return jsonify({'has_key': has_key})
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -177,6 +182,29 @@ def upload_file():
         # Advanced OCR with Gemini (if API Key provided and file is PDF/Image)
         if gemini_key and ext in ('pdf', 'png', 'jpg', 'jpeg'):
             mime_type = 'application/pdf' if ext == 'pdf' else f'image/{ext if ext != "jpg" else "jpeg"}'
+            
+            # Compress image files to avoid token size limit/high demand spikes on free keys
+            if ext in ('png', 'jpg', 'jpeg'):
+                try:
+                    img = Image.open(io.BytesIO(file_bytes))
+                    if img.mode in ('RGBA', 'LA') or (img.mode == 'P' and 'transparency' in img.info):
+                        img = img.convert('RGB')
+                    
+                    max_dim = 2000
+                    if img.width > max_dim or img.height > max_dim:
+                        try:
+                            resample_filter = Image.Resampling.LANCZOS
+                        except AttributeError:
+                            resample_filter = Image.ANTIALIAS
+                        img.thumbnail((max_dim, max_dim), resample_filter)
+                        
+                    compressed_io = io.BytesIO()
+                    img.save(compressed_io, format='JPEG', quality=80)
+                    file_bytes = compressed_io.getvalue()
+                    mime_type = 'image/jpeg'
+                except Exception as img_err:
+                    print(f"⚠️ Image compression failed: {img_err}")
+
             try:
                 extracted_text = ocr_via_gemini(file_bytes, mime_type, gemini_key)
                 return jsonify({
