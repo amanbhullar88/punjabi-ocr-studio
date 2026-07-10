@@ -1,5 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     
+    // Device detection
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
     // ---------- Gemini API Key & Engine Manager ----------
     const settingsBtnTop = document.getElementById('settingsBtnTop');
     const settingsModal = document.getElementById('settingsModal');
@@ -182,6 +186,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!data.error) {
                 convertedText.innerHTML = data.converted_html || data.converted;
                 applyDynamicFont();
+                // Switch mobile tab to output if window is narrow
+                if (window.innerWidth <= 768) {
+                    switchMobileTab('output');
+                }
             }
         })
         .catch(err => console.error('Auto convert error:', err));
@@ -212,10 +220,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
             recognition.lang = voiceLang.value;
-            
-            // Detect iOS devices (iPhone, iPad, iPod)
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
             
             if (isIOS) {
                 recognition.continuous = false; // iOS Safari fails with service-not-allowed if continuous is true!
@@ -280,7 +284,8 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             recognition.onend = function() {
-                if (isListening && !isPaused) {
+                // Do NOT auto-restart on iOS Safari as it triggers service-not-allowed security blocks!
+                if (isListening && !isPaused && !isIOS) {
                     try {
                         recognition.start();
                     } catch(e) {
@@ -438,6 +443,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 triggerConversion();
             } else {
                 convertedText.innerText = data.text;
+                // Switch mobile tab to output if window is narrow
+                if (window.innerWidth <= 768) {
+                    switchMobileTab('output');
+                }
             }
 
             updateStatus(`📂 Loaded: ${file.name}`, 'success');
@@ -499,6 +508,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 convertedText.innerHTML = data.converted_html || data.converted;
                 applyDynamicFont();
                 updateStatus('✅ Font converted successfully!', 'success');
+                if (window.innerWidth <= 768) {
+                    switchMobileTab('output');
+                }
             }
         })
         .catch(err => {
@@ -555,6 +567,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 convertedText.style.fontFamily = "'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif";
                 
                 updateStatus('✅ Translation completed!', 'success');
+                if (window.innerWidth <= 768) {
+                    switchMobileTab('output');
+                }
             }
         })
         .catch(err => {
@@ -778,5 +793,36 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             updateStatus('System Ready', 'success');
         }, 5000);
+    }
+
+    // ---------- Mobile Navigation Tabs ----------
+    const tabSourceBtn = document.getElementById('tabSourceBtn');
+    const tabOutputBtn = document.getElementById('tabOutputBtn');
+    const sourceColumn = document.getElementById('sourceColumn');
+    const outputColumn = document.getElementById('outputColumn');
+
+    function switchMobileTab(tab) {
+        if (!sourceColumn || !outputColumn || !tabSourceBtn || !tabOutputBtn) return;
+        
+        if (tab === 'source') {
+            tabSourceBtn.classList.add('active');
+            tabOutputBtn.classList.remove('active');
+            sourceColumn.classList.add('active-tab');
+            outputColumn.classList.remove('active-tab');
+        } else if (tab === 'output') {
+            tabSourceBtn.classList.remove('active');
+            tabOutputBtn.classList.add('active');
+            sourceColumn.classList.remove('active-tab');
+            outputColumn.classList.add('active-tab');
+        }
+    }
+
+    if (tabSourceBtn) tabSourceBtn.addEventListener('click', () => switchMobileTab('source'));
+    if (tabOutputBtn) tabOutputBtn.addEventListener('click', () => switchMobileTab('output'));
+
+    // Set initial active tab state for mobile
+    if (sourceColumn && outputColumn) {
+        sourceColumn.classList.add('active-tab');
+        outputColumn.classList.remove('active-tab');
     }
 });
