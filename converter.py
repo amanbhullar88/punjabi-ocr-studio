@@ -35,6 +35,7 @@ def convert_string_using_mapper(mapper_config: Dict[str, Any], string_to_convert
     max_width = mapper_config["maxWidth"]
     move_right_chars = mapper_config["moveRightChars"]
     move_left_chars = mapper_config["moveLeftChars"]
+    move_across_chars = mapper_config.get("moveAcrossCharacters", [])
 
     output: List[str] = []
     pending_right = None
@@ -60,13 +61,14 @@ def convert_string_using_mapper(mapper_config: Dict[str, Any], string_to_convert
             if char_to_add in move_right_chars:
                 output.append(char_to_add)
             else:
-                output.append(pending_right)
+                # In Unicode, the consonant (char_to_add) must be placed BEFORE the Matra (pending_right)
                 output.append(char_to_add)
+                output.append(pending_right)
                 pending_right = None
         elif char_to_add in move_right_chars:
             pending_right = char_to_add
         elif char_to_add in move_left_chars and len(output) > 0:
-            insert_char_on_left(output, move_left_chars, char_to_add)
+            insert_char_on_left(output, move_left_chars, move_across_chars, char_to_add)
         else:
             output.append(char_to_add)
 
@@ -75,14 +77,20 @@ def convert_string_using_mapper(mapper_config: Dict[str, Any], string_to_convert
 
     return "".join(output)
 
-def insert_char_on_left(chars: List[str], move_left_across_chars: List[str], character_to_add: str):
+def insert_char_on_left(chars: List[str], move_left_chars: List[str], move_across_chars: List[str], character_to_add: str):
     if not chars:
         chars.append(character_to_add)
         return
     moved = []
-    while chars and chars[-1] in move_left_across_chars:
+    # 1. Pop any characters that are in move_left_chars or move_across_chars (like subjoined consonants)
+    while chars and (chars[-1] in move_left_chars or chars[-1] in move_across_chars):
         moved.insert(0, chars.pop())
+    # 2. Pop EXACTLY ONE more character (the main consonant)
+    if chars:
+        moved.insert(0, chars.pop())
+    # 3. Append the sihari
     chars.append(character_to_add)
+    # 4. Put back the popped characters
     chars.extend(moved)
 
 # -----------------------------

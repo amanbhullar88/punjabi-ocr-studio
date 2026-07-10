@@ -80,19 +80,35 @@ def split_gurmukhi_segments(text):
     
     segments = []
     current_segment = []
-    # Check if first character is in the Gurmukhi block
-    is_gur = ('\u0A00' <= text[0] <= '\u0A7F')
     
+    # Find the first character that is clearly Gurmukhi or English to set the initial state
+    is_gur = True
     for char in text:
-        char_is_gur = ('\u0A00' <= char <= '\u0A7F')
+        if '\u0A00' <= char <= '\u0A7F':
+            is_gur = True
+            break
+        elif char.isalpha():
+            is_gur = False
+            break
+            
+    for char in text:
+        # Check if character is Gurmukhi
+        char_is_gur = ('\u0A00' <= char <= '\u0A7F') or char in ('\u0964', '\u0965')
+        # Check if character is English letter
+        char_is_eng = char.isalpha() and not char_is_gur
         
-        if char_is_gur == is_gur:
+        # Space, numbers, and punctuation are "neutral" and don't change the active segment type
+        if not char_is_gur and not char_is_eng:
             current_segment.append(char)
         else:
-            segments.append((is_gur, "".join(current_segment)))
-            is_gur = char_is_gur
-            current_segment = [char]
-            
+            if char_is_gur == is_gur:
+                current_segment.append(char)
+            else:
+                if current_segment:
+                    segments.append((is_gur, "".join(current_segment)))
+                is_gur = char_is_gur
+                current_segment = [char]
+                
     if current_segment:
         segments.append((is_gur, "".join(current_segment)))
         
