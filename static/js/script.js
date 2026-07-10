@@ -174,89 +174,105 @@ document.addEventListener('DOMContentLoaded', function() {
 
     startBtn.addEventListener('click', function() {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            alert('Speech recognition not supported.');
+            alert('Speech recognition not supported in this browser. Please use Safari on iOS.');
             return;
         }
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.lang = voiceLang.value;
         
-        // Detect iOS devices (iPhone, iPad, iPod)
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-        
-        if (isIOS) {
-            recognition.continuous = false; // iOS Safari fails with service-not-allowed if continuous is true!
-            recognition.interimResults = true;
-        } else {
-            recognition.continuous = true;
-            recognition.interimResults = true;
-        }
-
-        recognition.onstart = function() {
-            isListening = true;
-            isPaused = false;
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
-            pauseBtn.disabled = false;
-            pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
-            updateStatus(`🎤 Listening... (${voiceLang.options[voiceLang.selectedIndex].text})`, 'info');
-        };
-
-        recognition.onresult = function(event) {
-            if (isPaused) return;
-            let final = '';
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                if (event.results[i].isFinal) {
-                    final += event.results[i][0].transcript + ' ';
-                }
-            }
-            if (final) {
-                sourceText.value += final;
-                // Trigger auto-conversion if active
-                if (autoConvertToggle.checked) {
-                    triggerConversion();
-                }
-                sourceText.scrollTop = sourceText.scrollHeight;
-            }
-        };
-
-        recognition.onerror = function(event) {
-            console.error('Speech error:', event.error);
-            let userMsg = event.error;
-            if (event.error === 'not-allowed') {
-                userMsg = 'Microphone access blocked. Please allow mic in settings.';
-                alert('Microphone Access Blocked:\nPlease go to your iPhone Settings > Safari > Microphone, and change it to "Allow".');
-            } else if (event.error === 'service-not-allowed') {
-                userMsg = 'Dictation disabled. Please enable it in keyboard settings.';
-                alert('iOS Dictation Disabled:\nPlease go to your iPhone Settings > General > Keyboard, scroll to the bottom, and turn ON "Enable Dictation".');
-            }
-            updateStatus(`❌ Error: ${userMsg}`, 'danger');
+        try {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = voiceLang.value;
             
-            // Safe manual stop without wiping error message
-            if (recognition) {
-                try { recognition.stop(); } catch(e) {}
-                recognition = null;
+            // Detect iOS devices (iPhone, iPad, iPod)
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            
+            if (isIOS) {
+                recognition.continuous = false; // iOS Safari fails with service-not-allowed if continuous is true!
+                recognition.interimResults = true;
+            } else {
+                recognition.continuous = true;
+                recognition.interimResults = true;
             }
+
+            recognition.onstart = function() {
+                isListening = true;
+                isPaused = false;
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                pauseBtn.disabled = false;
+                pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+                updateStatus(`🎤 Listening... (${voiceLang.options[voiceLang.selectedIndex].text})`, 'info');
+            };
+
+            recognition.onresult = function(event) {
+                if (isPaused) return;
+                let final = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        final += event.results[i][0].transcript + ' ';
+                    }
+                }
+                if (final) {
+                    sourceText.value += final;
+                    // Trigger auto-conversion if active
+                    if (autoConvertToggle.checked) {
+                        triggerConversion();
+                    }
+                    sourceText.scrollTop = sourceText.scrollHeight;
+                }
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Speech error:', event.error);
+                let userMsg = event.error;
+                if (event.error === 'not-allowed') {
+                    userMsg = 'Microphone access blocked. Please allow mic in settings.';
+                    alert('Microphone Access Blocked:\nPlease go to your iPhone Settings > Safari > Microphone, and change it to "Allow".');
+                } else if (event.error === 'service-not-allowed') {
+                    userMsg = 'Dictation disabled. Please enable it in keyboard settings.';
+                    alert('iOS Dictation Disabled:\nPlease go to your iPhone Settings > General > Keyboard, scroll to the bottom, and turn ON "Enable Dictation".');
+                } else {
+                    updateStatus(`❌ Error: ${userMsg}`, 'danger');
+                }
+                
+                // Safe manual stop without wiping error message
+                if (recognition) {
+                    try { recognition.stop(); } catch(e) {}
+                    recognition = null;
+                }
+                isListening = false;
+                isPaused = false;
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                pauseBtn.disabled = true;
+                pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+            };
+
+            recognition.onend = function() {
+                if (isListening && !isPaused) {
+                    try {
+                        recognition.start();
+                    } catch(e) {
+                        console.error('Failed to restart speech recognition:', e);
+                        stopListening();
+                    }
+                } else {
+                    stopListening();
+                }
+            };
+
+            recognition.start();
+        } catch (err) {
+            console.error('Speech Recognition Initialization Error:', err);
+            alert('Speech Recognition could not be started: ' + err.message);
+            updateStatus(`❌ Error: ${err.message}`, 'danger');
             isListening = false;
             isPaused = false;
             startBtn.disabled = false;
             stopBtn.disabled = true;
             pauseBtn.disabled = true;
-            pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
-        };
-
-        recognition.onend = function() {
-            if (isListening && !isPaused) {
-                try {
-                    recognition.start();
-                } catch(e) {}
-            } else {
-                stopListening();
-            }
-        };
-
-        recognition.start();
+        }
     });
 
     function stopListening() {
@@ -296,6 +312,11 @@ document.addEventListener('DOMContentLoaded', function() {
     let videoStream = null;
 
     cameraBtn.addEventListener('click', async function() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert('Camera access is not supported in this browser or environment (e.g. Chrome on iOS or insecure context). Please use Safari on iOS.');
+            updateStatus('❌ Camera error: getUserMedia not supported', 'danger');
+            return;
+        }
         try {
             videoStream = await navigator.mediaDevices.getUserMedia({ 
                 video: { facingMode: 'environment' } 
@@ -514,9 +535,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    closeTranslationBtn.addEventListener('click', function() {
-        translationResultContainer.style.display = 'none';
-    });
+    if (closeTranslationBtn) {
+        closeTranslationBtn.addEventListener('click', function() {
+            if (translationResultContainer) translationResultContainer.style.display = 'none';
+        });
+    }
 
     // ---------- Copy & Export Actions ----------
     document.getElementById('copySrcBtn').addEventListener('click', function() {
@@ -535,13 +558,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedValue = targetFontSelect.value;
         const fontName = fontMapping[selectedValue] || 'inherit';
         
-        // Create a temporary div out of view to select and copy
         const tempDiv = document.createElement('div');
-        
-        // Replace newlines with br tags before copying so MS Word preserves line breaks
         tempDiv.innerHTML = convertedText.innerHTML.replace(/\r?\n/g, '<br>');
         
-        // Inject absolute styles into spans so MS Word can interpret them correctly
         const legacySpans = tempDiv.querySelectorAll('.font-legacy');
         legacySpans.forEach(span => {
             span.style.fontFamily = fontName === 'inherit' ? 'inherit' : `${fontName}, Arial, sans-serif`;
@@ -551,15 +570,39 @@ document.addEventListener('DOMContentLoaded', function() {
         englishSpans.forEach(span => {
             span.style.fontFamily = "'Arial', 'Calibri', sans-serif";
         });
-        
-        // Place tempDiv out of viewport but keep display/styling active
+
+        const formattedHtml = tempDiv.innerHTML;
+        const plainText = convertedText.innerText;
+
+        // Try Clipboard API with ClipboardItem first (modern standard)
+        if (navigator.clipboard && window.ClipboardItem) {
+            const htmlBlob = new Blob([formattedHtml], { type: 'text/html' });
+            const textBlob = new Blob([plainText], { type: 'text/plain;charset=utf-8' });
+            const item = new ClipboardItem({
+                'text/html': htmlBlob,
+                'text/plain': textBlob
+            });
+
+            navigator.clipboard.write([item]).then(() => {
+                showStatus('📋 Formatted Rich Text copied! (Ready to paste in MS Word)', 'success');
+            }).catch(err => {
+                console.warn('ClipboardItem copy failed, trying fallback:', err);
+                fallbackCopy(formattedHtml, plainText);
+            });
+        } else {
+            fallbackCopy(formattedHtml, plainText);
+        }
+    });
+
+    function fallbackCopy(htmlContent, plainText) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlContent;
         tempDiv.style.position = 'absolute';
         tempDiv.style.left = '-9999px';
         tempDiv.style.top = '-9999px';
         tempDiv.style.whiteSpace = 'pre-wrap';
         document.body.appendChild(tempDiv);
         
-        // Select the text range in tempDiv
         const range = document.createRange();
         range.selectNodeContents(tempDiv);
         const selection = window.getSelection();
@@ -567,25 +610,28 @@ document.addEventListener('DOMContentLoaded', function() {
         selection.addRange(range);
         
         try {
-            // execCommand copy is supported in both HTTP/HTTPS contexts and preserves rich styles natively
             const successful = document.execCommand('copy');
             if (successful) {
                 showStatus('📋 Formatted Rich Text copied! (Ready to paste in MS Word)', 'success');
             } else {
-                throw new Error('execCommand failed');
+                throw new Error('execCommand returned false');
             }
         } catch (err) {
-            console.error('execCommand copy failed, falling back to Clipboard API:', err);
-            const plainText = convertedText.innerText;
-            navigator.clipboard.writeText(plainText).then(() => {
-                showStatus('📋 Copied plain text', 'success');
-            });
+            console.error('Fallback execCommand failed:', err);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(plainText).then(() => {
+                    showStatus('📋 Copied plain text', 'success');
+                }).catch(e => {
+                    alert('Copy failed. Please manually select and copy the text.');
+                });
+            } else {
+                alert('Copy failed. Please manually select and copy the text.');
+            }
         }
         
-        // Clean up temp selection and element
         selection.removeAllRanges();
         document.body.removeChild(tempDiv);
-    });
+    }
 
     document.getElementById('exportBtn').addEventListener('click', function() {
         const text = convertedText.innerText;
