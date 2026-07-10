@@ -260,8 +260,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     userMsg = 'Microphone access blocked. Please allow mic in settings.';
                     alert('Microphone Access Blocked:\nPlease go to your iPhone Settings > Safari > Microphone, and change it to "Allow".');
                 } else if (event.error === 'service-not-allowed') {
-                    userMsg = 'Dictation disabled. Please enable it in keyboard settings.';
-                    alert('iOS Dictation Disabled:\nPlease go to your iPhone Settings > General > Keyboard, scroll to the bottom, and turn ON "Enable Dictation".');
+                    userMsg = 'iOS Speech Recognition Service Not Allowed.';
+                    alert('iOS Speech Recognition Error:\n\n1. Ensure you are using the native SAFARI browser on iPhone. (Chrome, Firefox, or inside apps like WhatsApp/Facebook on iOS do NOT support Speech Recognition and will always fail with this error).\n2. If already using Safari, try closing other tabs or apps using the microphone.\n3. Make sure Siri is not actively listening.\n4. Try restarting Safari.');
                 } else {
                     updateStatus(`❌ Error: ${userMsg}`, 'danger');
                 }
