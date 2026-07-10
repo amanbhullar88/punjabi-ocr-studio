@@ -433,6 +433,14 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(res => res.json())
         .then(data => {
             if (data.error) {
+                // If it is an image and Gemini threw an API key/quota/billing error, or server lacks local Tesseract, automatically run local free OCR fallback!
+                const isImage = file.type.startsWith('image/') || /\.(png|jpg|jpeg)$/i.test(file.name);
+                if (isImage && (data.error.includes('Gemini') || data.error.includes('quota') || data.error.includes('billing') || data.error.includes('limit') || data.error.includes('API key') || data.error.includes('Tesseract') || data.error.includes('TESSERACT_PATH') || data.error.includes('poppler'))) {
+                    console.warn('Backend OCR issue, running client-side local free OCR:', data.error);
+                    updateStatus('⚠️ API limit reached. Running Free Local OCR fallback...', 'warning');
+                    runLocalOcr(file);
+                    return;
+                }
                 updateStatus('❌ Error: ' + data.error, 'danger');
                 alert(data.error);
                 return;
@@ -471,8 +479,47 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(err => {
-            updateStatus('❌ Upload/Processing failed', 'danger');
-            console.error(err);
+            const isImage = file.type.startsWith('image/') || /\.(png|jpg|jpeg)$/i.test(file.name);
+            if (isImage) {
+                console.warn('Upload failed, falling back to client-side local free OCR:', err);
+                updateStatus('⚠️ Server offline. Running Free Local OCR fallback...', 'warning');
+                runLocalOcr(file);
+            } else {
+                updateStatus('❌ Upload/Processing failed', 'danger');
+                console.error(err);
+            }
+        });
+    }
+
+    function runLocalOcr(file) {
+        updateStatus('🔄 Loading free local OCR engine...', 'info');
+        
+        // Use Tesseract.js to run OCR locally in the browser
+        Tesseract.recognize(
+            file,
+            'pan+eng', // Punjabi and English
+            {
+                logger: m => {
+                    if (m.status === 'recognizing') {
+                        updateStatus(`🔄 Free OCR progress: ${(m.progress * 100).toFixed(0)}%`, 'info');
+                    }
+                }
+            }
+        ).then(({ data: { text } }) => {
+            sourceText.value = text;
+            if (autoConvertToggle.checked) {
+                triggerConversion();
+            } else {
+                convertedText.innerText = text;
+                if (window.innerWidth <= 768) {
+                    switchMobileTab('output');
+                }
+            }
+            updateStatus('✅ Free local OCR complete!', 'success');
+        }).catch(err => {
+            console.error('Local OCR failed:', err);
+            updateStatus('❌ Local OCR failed', 'danger');
+            alert('Free Local OCR Error: ' + err.message);
         });
     }
 
