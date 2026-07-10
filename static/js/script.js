@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert('Microphone Access Blocked:\nPlease go to your iPhone Settings > Safari > Microphone, and change it to "Allow".');
                 } else if (event.error === 'service-not-allowed') {
                     userMsg = 'iOS Speech Recognition Service Not Allowed.';
-                    alert('iOS Speech Recognition Error:\n\n1. Use native SAFARI browser on iPhone (not Chrome/Firefox or inside WhatsApp/Facebook).\n2. Language Files: If you selected Punjabi or Hindi, iOS might not have the dictation files downloaded. Switch the "Voice" dropdown in the app to "English" and click Start to test if the microphone works.\n3. Add Keyboard: Ensure the Punjabi (Gurmukhi) keyboard is added in your iPhone Settings > General > Keyboard > Keyboards.');
+                    alert('iPhone Speech Recognition Limitation:\n\nApple often restricts browser-based speech recognition on iOS.\n\nTo speak and type in Punjabi with 100% accuracy:\n1. Tap inside the "Source Text" input box to open the keyboard.\n2. Tap the Microphone icon on the bottom-right of your iPhone virtual keyboard.\n3. Speak in Punjabi/Hindi, and your iPhone will type it directly.');
                 } else {
                     updateStatus(`❌ Error: ${userMsg}`, 'danger');
                 }
