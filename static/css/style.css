@@ -392,8 +392,8 @@ input:checked + .slider:before {
     display: flex;
     gap: 16px;
     flex-grow: 1;
-    height: calc(100vh - 190px);
     min-height: 250px;
+    height: 0; /* Let flexbox control the height dynamically */
 }
 
 .workspace-column {
@@ -1000,47 +1000,142 @@ input:checked + .slider:before {
 }
 
 /* ----------------------------------------------------
-   Rich Text Editor Toolbar
+   Unified Professional Control Ribbon (app-toolbar)
    ---------------------------------------------------- */
-.editor-toolbar {
-    background-color: #0f172a; /* Match body slate 900 background */
+.app-toolbar {
+    background-color: #1e293b; /* Slate 800 */
     border: 1px solid #334155;
-    border-radius: 6px;
-    padding: 6px 10px;
-    margin-bottom: 10px;
+    border-radius: 8px;
+    padding: 10px 18px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    flex-wrap: nowrap; /* Keep single row layout */
+    overflow-x: auto; /* Enable swipe scroll on mobile */
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Scrollbar styles for the toolbar ribbon */
+.app-toolbar::-webkit-scrollbar {
+    height: 4px;
+}
+.app-toolbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.app-toolbar::-webkit-scrollbar-thumb {
+    background: #4b5563;
+    border-radius: 2px;
+}
+
+.toolbar-group {
+    display: flex;
+    flex-direction: column;
     gap: 4px;
     flex-shrink: 0;
 }
 
-.toolbar-section {
+.group-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8; /* Slate 400 */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
-.t-separator {
+.group-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.group-divider {
     width: 1px;
-    height: 18px;
+    height: 36px;
     background-color: #334155;
-    margin: 0 4px;
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.select-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #0f172a; /* Slate 900 */
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 2px 8px;
+    height: 32px;
+}
+
+.select-wrapper .form-select {
+    border: none;
+    background: transparent;
+    padding: 0;
+    height: 100%;
+}
+
+.select-wrapper .form-select:focus {
+    outline: none;
+    border: none;
+}
+
+.control-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.control-label.font-bold {
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+.toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 4px 8px;
+    height: 32px;
+}
+
+.formatting-cluster {
+    display: flex;
+    align-items: center;
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 2px;
+    gap: 2px;
+    height: 32px;
 }
 
 .t-btn {
     background: transparent;
     border: none;
     color: #94a3b8;
-    padding: 6px;
+    padding: 5px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 13px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     transition: all 0.15s ease;
 }
 
@@ -1059,7 +1154,7 @@ input:checked + .slider:before {
     font-size: 12px;
     font-weight: 600;
     color: #f8fafc;
-    min-width: 20px;
+    min-width: 22px;
     text-align: center;
     user-select: none;
 }
@@ -1071,9 +1166,9 @@ input:checked + .slider:before {
 
 .t-color-dot {
     position: absolute;
-    bottom: 4px;
-    right: 4px;
-    width: 6px;
-    height: 6px;
+    bottom: 2px;
+    right: 2px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
 }
