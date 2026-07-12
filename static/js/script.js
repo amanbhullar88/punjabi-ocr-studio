@@ -199,6 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let recognition = null;
     let isPaused = false;
     let isListening = false;
+    let lastFinalizedIndex = -1; // Keep track of finalized indices to prevent duplication on Android Chrome
 
     const startBtn = document.getElementById('startBtn');
     const stopBtn = document.getElementById('stopBtn');
@@ -213,12 +214,13 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         try {
             recognition = new SpeechRecognition();
-            recognition.continuous = !isIOS;
+            recognition.continuous = true; // Use continuous recognition on all platforms including iOS Safari
             recognition.interimResults = true;
             
             recognition.onstart = function() {
                 isListening = true;
                 isPaused = false;
+                lastFinalizedIndex = -1; // Reset tracker for new session
                 startBtn.disabled = true;
                 stopBtn.disabled = false;
                 pauseBtn.disabled = false;
@@ -230,8 +232,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (isPaused) return;
                 let final = '';
                 for (let i = event.resultIndex; i < event.results.length; i++) {
-                    if (event.results[i].isFinal) {
+                    if (event.results[i].isFinal && i > lastFinalizedIndex) {
                         final += event.results[i][0].transcript + ' ';
+                        lastFinalizedIndex = i;
                     }
                 }
                 if (final) {
