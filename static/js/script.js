@@ -341,32 +341,52 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // ---------- Import Document Dropdown ----------
+    const importDropdownBtn = document.getElementById('importDropdownBtn');
+    const importDropdownMenu = document.getElementById('importDropdownMenu');
+
+    if (importDropdownBtn && importDropdownMenu) {
+        importDropdownBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            importDropdownMenu.classList.toggle('show');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!importDropdownBtn.contains(e.target)) {
+                importDropdownMenu.classList.remove('show');
+            }
+        });
+    }
+
     // ---------- Camera Scanning Module ----------
-    const cameraBtn = document.getElementById('cameraBtn');
+    const cameraDropdownItem = document.getElementById('cameraDropdownItem');
     const cameraContainer = document.getElementById('cameraContainer');
     const video = document.getElementById('video');
     const captureBtn = document.getElementById('captureBtn');
     const closeCamBtn = document.getElementById('closeCamBtn');
     let videoStream = null;
 
-    cameraBtn.addEventListener('click', async function() {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            alert('Camera access is not supported in this browser or environment (e.g. Chrome on iOS or insecure context). Please use Safari on iOS.');
-            updateStatus('❌ Camera error: getUserMedia not supported', 'danger');
-            return;
-        }
-        try {
-            videoStream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: 'environment' } 
-            });
-            video.srcObject = videoStream;
-            cameraContainer.style.display = 'block';
-            updateStatus('📷 Camera initialized - hold document steady', 'info');
-        } catch (err) {
-            updateStatus('❌ Camera error: ' + err.message, 'danger');
-            alert('Could not access camera. Please grant camera permissions.');
-        }
-    });
+    if (cameraDropdownItem) {
+        cameraDropdownItem.addEventListener('click', async function() {
+            if (importDropdownMenu) importDropdownMenu.classList.remove('show');
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('Camera access is not supported in this browser or environment (e.g. Chrome on iOS or insecure context). Please use Safari on iOS.');
+                updateStatus('❌ Camera error: getUserMedia not supported', 'danger');
+                return;
+            }
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' } 
+                });
+                video.srcObject = videoStream;
+                cameraContainer.style.display = 'block';
+                updateStatus('📷 Camera initialized - hold document steady', 'info');
+            } catch (err) {
+                updateStatus('❌ Camera error: ' + err.message, 'danger');
+                alert('Could not access camera. Please grant camera permissions.');
+            }
+        });
+    }
 
     function stopCamera() {
         if (videoStream) {
@@ -402,12 +422,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ---------- File Upload Module ----------
-    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadDropdownItem = document.getElementById('uploadDropdownItem');
     const fileInput = document.getElementById('fileInput');
 
-    uploadBtn.addEventListener('click', function() {
-        fileInput.click();
-    });
+    if (uploadDropdownItem) {
+        uploadDropdownItem.addEventListener('click', function() {
+            if (importDropdownMenu) importDropdownMenu.classList.remove('show');
+            fileInput.click();
+        });
+    }
 
     fileInput.addEventListener('change', function() {
         const file = this.files[0];
