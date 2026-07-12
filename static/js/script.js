@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         document.addEventListener('click', function(e) {
-            if (!importDropdownBtn.contains(e.target)) {
+            if (!importDropdownBtn.contains(e.target) && !importDropdownMenu.contains(e.target)) {
                 importDropdownMenu.classList.remove('show');
             }
         });
