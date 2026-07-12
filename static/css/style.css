@@ -819,17 +819,28 @@ input:checked + .slider:before {
         margin: 0 !important;
     }
     
+    .desktop-only-import {
+        display: none !important;
+    }
+    .mobile-only-import {
+        display: inline-flex !important;
+    }
+
+    .group-title {
+        display: none !important;
+    }
+
     .form-select, .form-control {
-        padding: 6px 8px;
-        font-size: 12px;
-        height: 32px;
+        padding: 4px 6px !important;
+        font-size: 11px !important;
+        height: 28px !important;
         width: auto !important;
     }
     
     .btn {
-        padding: 6px 10px;
-        font-size: 12px;
-        height: 32px;
+        padding: 4px 8px !important;
+        font-size: 11px !important;
+        height: 28px !important;
         width: auto !important;
         display: inline-flex;
         align-items: center;
@@ -837,10 +848,33 @@ input:checked + .slider:before {
     }
     
     #translateBtn {
-        height: 32px;
-        padding: 6px 10px !important;
-        font-size: 12px !important;
+        height: 28px !important;
+        padding: 4px 8px !important;
+        font-size: 11px !important;
         width: auto !important;
+    }
+
+    .select-wrapper, .toggle-wrapper {
+        height: 28px !important;
+        padding: 2px 6px !important;
+        gap: 4px !important;
+    }
+
+    .formatting-cluster {
+        height: 28px !important;
+        padding: 1px !important;
+    }
+
+    .t-btn {
+        width: 22px !important;
+        height: 22px !important;
+        font-size: 11px !important;
+        padding: 3px !important;
+    }
+
+    .t-val {
+        font-size: 10px !important;
+        min-width: 18px !important;
     }
     
     .vertical-separator {
@@ -985,6 +1019,14 @@ input:checked + .slider:before {
 .dropdown {
     position: relative;
     display: inline-block;
+}
+
+.desktop-only-import {
+    display: inline-block;
+}
+
+.mobile-only-import {
+    display: none !important;
 }
 
 .dropdown-menu {
