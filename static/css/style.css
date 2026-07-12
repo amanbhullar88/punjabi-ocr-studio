@@ -272,6 +272,11 @@ body {
     cursor: pointer;
 }
 
+.form-select option {
+    background-color: #1e293b;
+    color: #f8fafc;
+}
+
 .form-select:focus {
     border-color: #38bdf8;
 }
