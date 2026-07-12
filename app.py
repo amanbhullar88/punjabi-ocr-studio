@@ -406,7 +406,7 @@ def convert_text():
             'converted_html': converted_html
         })
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)})
 
 def convert_docx_run(run, paragraph, from_font, to_font, conv):
     """
@@ -776,7 +776,7 @@ def translate():
             
         return jsonify({'translation': translated})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True)
