@@ -10,7 +10,7 @@ FONT_FAMILY_MAP = {
     "AmritLipi": "AmritLipi",
     "Satluj": "Satluj",
     "Amar Lipi": "AmarLipi",
-    "Gurumukhi Lys": "GurumukhiLys-020-Condensed",
+    "Gurumukhi Lys (CCTNS CAS)": "GurumukhiLys-020-Condensed",
 }
 DROPDOWN_TO_CONVERTER = {
     "Gurmukhi (Unicode)": "Unicode",
@@ -22,7 +22,7 @@ DROPDOWN_TO_CONVERTER = {
     "AmritLipi": "AmritLipi",
     "Satluj": "Satluj",
     "Amar Lipi": "AmarLipi",
-    "Gurumukhi Lys": "GurumukhiLys",
+    "Gurumukhi Lys (CCTNS CAS)": "GurumukhiLys",
 }
 CONV_SOURCE_UNICODE = "AnmolUni"
 
@@ -66,13 +66,13 @@ WORD_FONT_MAP = {
     "AmritLipi": "AmritLipi",
     "Satluj": "Satluj",
     "AmarLipi": "AmarLipi",
-    "GurumukhiLys": "GurumukhiLys-020-Condensed"
+    "GurumukhiLys": "Gurumukhi Lys (CCTNS CAS)"
 }
 
 LEGACY_FONTS = {
     "Asees", "AnmolLipi", "Anmol Lipi", "Joy", "GurbaniLipi", 
     "Satluj", "AmritLipi", "AmarLipi", "GurumukhiLys", 
-    "GurumukhiLys-020-Condensed", "Gurmukhi Lys"
+    "GurumukhiLys-020-Condensed", "Gurumukhi Lys", "Gurumukhi Lys (CCTNS CAS)"
 }
 
 def split_gurmukhi_segments(text):
