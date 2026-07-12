@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let recognition = null;
     let isPaused = false;
     let isListening = false;
-    let lastFinalizedIndex = -1; // Keep track of finalized indices to prevent duplication on Android Chrome
+    let preSpeechText = ''; // Store original text before speech recognition starts
 
     const startBtn = document.getElementById('startBtn');
     const stopBtn = document.getElementById('stopBtn');
@@ -214,13 +214,18 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         try {
             recognition = new SpeechRecognition();
-            recognition.continuous = true; // Use continuous recognition on all platforms including iOS Safari
+            // continuous mode MUST be false on iOS to prevent immediate service-not-allowed crashes
+            recognition.continuous = !isIOS;
             recognition.interimResults = true;
             
             recognition.onstart = function() {
                 isListening = true;
                 isPaused = false;
-                lastFinalizedIndex = -1; // Reset tracker for new session
+                preSpeechText = sourceText.value;
+                if (preSpeechText && !preSpeechText.endsWith(' ') && !preSpeechText.endsWith('\n')) {
+                    preSpeechText += ' ';
+                    sourceText.value = preSpeechText;
+                }
                 startBtn.disabled = true;
                 stopBtn.disabled = false;
                 pauseBtn.disabled = false;
@@ -230,21 +235,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
             recognition.onresult = function(event) {
                 if (isPaused) return;
-                let final = '';
-                for (let i = event.resultIndex; i < event.results.length; i++) {
-                    if (event.results[i].isFinal && i > lastFinalizedIndex) {
-                        final += event.results[i][0].transcript + ' ';
-                        lastFinalizedIndex = i;
-                    }
+                
+                // Rebuild the current session's transcript from the whole results array.
+                // This prevents duplication on Android Chrome (which buggy-resets event.resultIndex)
+                // and ensures we display intermediate speech in real-time.
+                let currentSessionTranscript = '';
+                for (let i = 0; i < event.results.length; i++) {
+                    currentSessionTranscript += event.results[i][0].transcript + ' ';
                 }
-                if (final) {
-                    sourceText.value += final;
-                    // Trigger auto-conversion if active
-                    if (autoConvertToggle.checked) {
-                        triggerConversion();
-                    }
-                    sourceText.scrollTop = sourceText.scrollHeight;
+                
+                sourceText.value = preSpeechText + currentSessionTranscript;
+                
+                // Trigger auto-conversion if active
+                if (autoConvertToggle.checked) {
+                    triggerConversion();
                 }
+                sourceText.scrollTop = sourceText.scrollHeight;
             };
 
             recognition.onerror = function(event) {
@@ -253,16 +259,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (event.error === 'not-allowed') {
                     userMsg = 'Microphone access blocked. Please allow mic in settings.';
                     alert('Microphone Access Blocked:\nPlease go to your iPhone Settings > Safari > Microphone, and change it to "Allow".');
+                    stopListening();
                 } else if (event.error === 'service-not-allowed') {
                     userMsg = 'iOS Speech Recognition Service Not Allowed.';
-                    // Update status bar quietly instead of showing a blocking alert modal on iPhone
                     updateStatus('⚠️ iOS dictation blocked. Tap input box and use keyboard mic.', 'warning');
-                    stopListening();
+                    stopListening(true); // pass true to preserve the status message we just wrote
                     return;
                 } else {
                     updateStatus(`❌ Error: ${userMsg}`, 'danger');
+                    stopListening(true); // pass true to preserve the status message we just wrote
                 }
-                stopListening();
             };
 
             recognition.onend = function() {
@@ -290,6 +296,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         try {
+            preSpeechText = sourceText.value;
+            if (preSpeechText && !preSpeechText.endsWith(' ') && !preSpeechText.endsWith('\n')) {
+                preSpeechText += ' ';
+                sourceText.value = preSpeechText;
+            }
             recognition.lang = voiceLang.value;
             recognition.start();
         } catch (err) {
@@ -301,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    function stopListening() {
+    function stopListening(preserveStatus = false) {
         if (recognition) {
             try { recognition.stop(); } catch(e) {}
         }
@@ -311,7 +322,9 @@ document.addEventListener('DOMContentLoaded', function() {
         stopBtn.disabled = true;
         pauseBtn.disabled = true;
         pauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
-        updateStatus('⏹ Stopped voice transcription', 'success');
+        if (!preserveStatus) {
+            updateStatus('⏹ Stopped voice transcription', 'success');
+        }
     }
 
     stopBtn.addEventListener('click', stopListening);
