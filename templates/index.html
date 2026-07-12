@@ -11,7 +11,7 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2.2">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2.3">
 </head>
 <body>
 
@@ -75,20 +75,12 @@
 
                 <div class="group-divider"></div>
 
-                <!-- Group 3: Font Conversion -->
+                <!-- Group 3: Font Converter (Removed Source Font, same line as Import/Scan) -->
                 <div class="toolbar-group">
                     <div class="group-title"><i class="fa-solid fa-shuffle"></i> Font Converter</div>
                     <div class="group-controls">
-                        <div class="select-wrapper">
-                            <span class="control-label">Lang:</span>
-                            <select id="sourceFont" class="form-select">
-                                <option value="auto">Auto Detect</option>
-                                <option value="Unicode">Unicode (Raavi)</option>
-                                <option value="AnmolLipi">Anmol Lipi</option>
-                                <option value="Asees">Asees</option>
-                                <option value="GurumukhiLys">Gurumukhi Lys (CCTNS CAS)</option>
-                            </select>
-                        </div>
+                        <!-- We hardcode sourceFont as a hidden input to keep JS working -->
+                        <input type="hidden" id="sourceFont" value="auto">
                         
                         <div class="select-wrapper">
                             <span class="control-label">Target:</span>
@@ -299,6 +291,6 @@
 <!-- Tesseract.js CDN for Free Local OCR Fallback -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <!-- Custom JS -->
-<script src="{{ url_for('static', filename='js/script.js') }}?v=2.2"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}?v=2.3"></script>
 </body>
 </html>
