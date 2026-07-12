@@ -31,159 +31,164 @@
     <!-- Main Workspace Content -->
     <div class="studio-main-content">
         <!-- Unified Premium Control Ribbon Toolbar -->
+        <!-- Unified Premium Control Ribbon Toolbar -->
         <header class="app-toolbar" id="editorToolbar">
-            <!-- Group 1: Dictation Controls -->
-            <div class="toolbar-group">
-                <div class="group-title"><i class="fa-solid fa-microphone"></i> Dictation</div>
-                <div class="group-controls">
-                    <button id="startBtn" class="btn btn-success"><i class="fa-solid fa-microphone"></i> Start</button>
-                    <button id="stopBtn" class="btn btn-danger" disabled><i class="fa-solid fa-stop"></i> Stop</button>
-                    <button id="pauseBtn" class="btn btn-warning" disabled><i class="fa-solid fa-pause"></i> Pause</button>
-                    <select id="voiceLang" class="form-select">
-                        <option value="pa-IN">Punjabi (Gurmukhi)</option>
-                        <option value="hi-IN">Hindi</option>
-                        <option value="en-US">English</option>
-                    </select>
+            <!-- Row 1: Dictation, Document & Conversion -->
+            <div class="toolbar-row">
+                <!-- Group 1: Dictation Controls -->
+                <div class="toolbar-group">
+                    <div class="group-title"><i class="fa-solid fa-microphone"></i> Dictation</div>
+                    <div class="group-controls">
+                        <button id="startBtn" class="btn btn-success"><i class="fa-solid fa-microphone"></i> Start</button>
+                        <button id="stopBtn" class="btn btn-danger" disabled><i class="fa-solid fa-stop"></i> Stop</button>
+                        <button id="pauseBtn" class="btn btn-warning" disabled><i class="fa-solid fa-pause"></i> Pause</button>
+                        <select id="voiceLang" class="form-select">
+                            <option value="pa-IN">Punjabi (Gurmukhi)</option>
+                            <option value="hi-IN">Hindi</option>
+                            <option value="en-US">English</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="group-divider"></div>
-            
-            <!-- Group 2: Document Import -->
-            <div class="toolbar-group">
-                <div class="group-title"><i class="fa-solid fa-file-import"></i> Document</div>
-                <div class="group-controls">
-                    <div class="dropdown">
-                        <button id="importDropdownBtn" class="btn btn-primary"><i class="fa-solid fa-cloud-arrow-up"></i> Import / Scan <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 2px;"></i></button>
-                        <div id="importDropdownMenu" class="dropdown-menu">
-                            <a id="uploadDropdownItem"><i class="fa-solid fa-cloud-arrow-up"></i> Upload File</a>
-                            <a id="cameraDropdownItem"><i class="fa-solid fa-camera"></i> Scan Document</a>
+                
+                <div class="group-divider"></div>
+                
+                <!-- Group 2: Document Import -->
+                <div class="toolbar-group">
+                    <div class="group-title"><i class="fa-solid fa-file-import"></i> Document</div>
+                    <div class="group-controls">
+                        <div class="dropdown">
+                            <button id="importDropdownBtn" class="btn btn-primary"><i class="fa-solid fa-cloud-arrow-up"></i> Import / Scan <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 2px;"></i></button>
+                            <div id="importDropdownMenu" class="dropdown-menu">
+                                <a id="uploadDropdownItem"><i class="fa-solid fa-cloud-arrow-up"></i> Upload File</a>
+                                <a id="cameraDropdownItem"><i class="fa-solid fa-camera"></i> Scan Document</a>
+                            </div>
+                        </div>
+                        <input type="file" id="fileInput" accept=".pdf,.docx,.png,.jpg,.jpeg" style="position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;">
+                    </div>
+                </div>
+
+                <div class="group-divider"></div>
+
+                <!-- Group 3: Font Conversion -->
+                <div class="toolbar-group">
+                    <div class="group-title"><i class="fa-solid fa-shuffle"></i> Font Converter</div>
+                    <div class="group-controls">
+                        <div class="select-wrapper">
+                            <span class="control-label">Lang:</span>
+                            <select id="sourceFont" class="form-select">
+                                <option value="auto">Auto Detect</option>
+                                <option value="Unicode">Unicode (Raavi)</option>
+                                <option value="AnmolLipi">Anmol Lipi</option>
+                                <option value="Asees">Asees</option>
+                                <option value="GurumukhiLys">Gurumukhi Lys (CCTNS CAS)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="select-wrapper">
+                            <span class="control-label">Target:</span>
+                            <select id="targetFont" class="form-select">
+                                {% for family in font_families %}
+                                <option value="{{ DROPDOWN_TO_CONVERTER[family] }}">{{ family }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <button id="convertBtn" class="btn btn-dark"><i class="fa-solid fa-shuffle"></i> Convert</button>
+                        
+                        <div class="toggle-wrapper">
+                            <label class="switch-container">
+                                <input type="checkbox" id="autoConvertToggle" checked>
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="control-label font-bold">Auto</span>
                         </div>
                     </div>
-                    <input type="file" id="fileInput" accept=".pdf,.docx,.png,.jpg,.jpeg" style="position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;">
                 </div>
             </div>
 
-            <div class="group-divider"></div>
-
-            <!-- Group 3: Font Conversion -->
-            <div class="toolbar-group">
-                <div class="group-title"><i class="fa-solid fa-shuffle"></i> Font Converter</div>
-                <div class="group-controls">
-                    <div class="select-wrapper">
-                        <span class="control-label">Lang:</span>
-                        <select id="sourceFont" class="form-select">
-                            <option value="auto">Auto Detect</option>
-                            <option value="Unicode">Unicode (Raavi)</option>
-                            <option value="AnmolLipi">Anmol Lipi</option>
-                            <option value="Asees">Asees</option>
-                            <option value="GurumukhiLys">Gurumukhi Lys (CCTNS CAS)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="select-wrapper">
-                        <span class="control-label">Target:</span>
-                        <select id="targetFont" class="form-select">
-                            {% for family in font_families %}
-                            <option value="{{ DROPDOWN_TO_CONVERTER[family] }}">{{ family }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <button id="convertBtn" class="btn btn-dark"><i class="fa-solid fa-shuffle"></i> Convert</button>
-                    
-                    <div class="toggle-wrapper">
-                        <label class="switch-container">
-                            <input type="checkbox" id="autoConvertToggle" checked>
-                            <span class="slider round"></span>
-                        </label>
-                        <span class="control-label font-bold">Auto</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="group-divider"></div>
-
-            <!-- Group 4: Translation -->
-            <div class="toolbar-group">
-                <div class="group-title"><i class="fa-solid fa-globe"></i> Translation</div>
-                <div class="group-controls">
-                    <div class="select-wrapper">
-                        <span class="control-label">Src:</span>
-                        <select id="translateSrc" class="form-select">
-                            <option value="auto">Auto Detect</option>
-                            <option value="pa">Punjabi</option>
-                            <option value="hi">Hindi</option>
-                            <option value="en">English</option>
-                        </select>
-                    </div>
-                    
-                    <div class="select-wrapper">
-                        <span class="control-label">Tgt:</span>
-                        <select id="destLang" class="form-select">
-                            <option value="en">English</option>
-                            <option value="pa">Punjabi</option>
-                            <option value="hi">Hindi</option>
-                            <option value="ur">Urdu</option>
-                            <option value="bn">Bengali</option>
-                            <option value="gu">Gujarati</option>
-                            <option value="mr">Marathi</option>
-                            <option value="ta">Tamil</option>
-                            <option value="te">Telugu</option>
-                        </select>
-                    </div>
-                    
-                    <button id="translateBtn" class="btn btn-translate-green"><i class="fa-solid fa-globe"></i> Translate</button>
-                </div>
-            </div>
-
-            <div class="group-divider"></div>
-
-            <!-- Group 5: Text Formatting -->
-            <div class="toolbar-group">
-                <div class="group-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Formatting</div>
-                <div class="group-controls">
-                    <div class="formatting-cluster">
-                        <button class="t-btn" data-command="undo" title="Undo"><i class="fa-solid fa-rotate-left"></i></button>
-                        <button class="t-btn" data-command="redo" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
-                    </div>
-                    
-                    <div class="formatting-cluster">
-                        <button class="t-btn" id="fontSizeDec" title="Decrease Size"><i class="fa-solid fa-minus"></i></button>
-                        <span id="fontSizeVal" class="t-val">15</span>
-                        <button class="t-btn" id="fontSizeInc" title="Increase Size"><i class="fa-solid fa-plus"></i></button>
-                    </div>
-                    
-                    <div class="formatting-cluster">
-                        <button class="t-btn" data-command="bold" title="Bold"><i class="fa-solid fa-bold"></i></button>
-                        <button class="t-btn" data-command="italic" title="Italic"><i class="fa-solid fa-italic"></i></button>
-                        <button class="t-btn" data-command="underline" title="Underline"><i class="fa-solid fa-underline"></i></button>
-                    </div>
-
-                    <div class="formatting-cluster">
-                        <div class="color-picker-wrapper">
-                            <button class="t-btn" id="textColorBtn" title="Text Color">
-                                <i class="fa-solid fa-font"></i>
-                                <span class="t-color-dot" id="textColorDot" style="background-color: #ffffff;"></span>
-                            </button>
-                            <input type="color" id="textColorPicker" value="#ffffff" style="display: none;">
+            <!-- Row 2: Translation & Formatting -->
+            <div class="toolbar-row row-second-ribbon">
+                <!-- Group 4: Translation -->
+                <div class="toolbar-group">
+                    <div class="group-title"><i class="fa-solid fa-globe"></i> Translation</div>
+                    <div class="group-controls">
+                        <div class="select-wrapper">
+                            <span class="control-label">Src:</span>
+                            <select id="translateSrc" class="form-select">
+                                <option value="auto">Auto Detect</option>
+                                <option value="pa">Punjabi</option>
+                                <option value="hi">Hindi</option>
+                                <option value="en">English</option>
+                            </select>
                         </div>
-                        <div class="color-picker-wrapper">
-                            <button class="t-btn" id="textBgBtn" title="Highlight Color">
-                                <i class="fa-solid fa-highlighter"></i>
-                                <span class="t-color-dot" id="textBgDot" style="background-color: transparent; border: 1px dashed #cbd5e1;"></span>
-                            </button>
-                            <input type="color" id="textBgPicker" value="#000000" style="display: none;">
+                        
+                        <div class="select-wrapper">
+                            <span class="control-label">Tgt:</span>
+                            <select id="destLang" class="form-select">
+                                <option value="en">English</option>
+                                <option value="pa">Punjabi</option>
+                                <option value="hi">Hindi</option>
+                                <option value="ur">Urdu</option>
+                                <option value="bn">Bengali</option>
+                                <option value="gu">Gujarati</option>
+                                <option value="mr">Marathi</option>
+                                <option value="ta">Tamil</option>
+                                <option value="te">Telugu</option>
+                            </select>
                         </div>
+                        
+                        <button id="translateBtn" class="btn btn-translate-green"><i class="fa-solid fa-file-invoice"></i> Translate</button>
                     </div>
+                </div>
 
-                    <div class="formatting-cluster">
-                        <button class="t-btn" data-command="justifyLeft" title="Align Left"><i class="fa-solid fa-align-left"></i></button>
-                        <button class="t-btn" data-command="justifyCenter" title="Align Center"><i class="fa-solid fa-align-center"></i></button>
-                        <button class="t-btn" data-command="justifyRight" title="Align Right"><i class="fa-solid fa-align-right"></i></button>
+                <div class="group-divider"></div>
+
+                <!-- Group 5: Text Formatting -->
+                <div class="toolbar-group">
+                    <div class="group-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Formatting</div>
+                    <div class="group-controls">
+                        <div class="formatting-cluster">
+                            <button class="t-btn" data-command="undo" title="Undo"><i class="fa-solid fa-rotate-left"></i></button>
+                            <button class="t-btn" data-command="redo" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
+                        </div>
+                        
+                        <div class="formatting-cluster">
+                            <button class="t-btn" id="fontSizeDec" title="Decrease Size"><i class="fa-solid fa-minus"></i></button>
+                            <span id="fontSizeVal" class="t-val">15</span>
+                            <button class="t-btn" id="fontSizeInc" title="Increase Size"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        
+                        <div class="formatting-cluster">
+                            <button class="t-btn" data-command="bold" title="Bold"><i class="fa-solid fa-bold"></i></button>
+                            <button class="t-btn" data-command="italic" title="Italic"><i class="fa-solid fa-italic"></i></button>
+                            <button class="t-btn" data-command="underline" title="Underline"><i class="fa-solid fa-underline"></i></button>
+                        </div>
+
+                        <div class="formatting-cluster">
+                            <div class="color-picker-wrapper">
+                                <button class="t-btn" id="textColorBtn" title="Text Color">
+                                    <i class="fa-solid fa-font"></i>
+                                    <span class="t-color-dot" id="textColorDot" style="background-color: #ffffff;"></span>
+                                </button>
+                                <input type="color" id="textColorPicker" value="#ffffff" style="display: none;">
+                            </div>
+                            <div class="color-picker-wrapper">
+                                <button class="t-btn" id="textBgBtn" title="Highlight Color">
+                                    <i class="fa-solid fa-highlighter"></i>
+                                    <span class="t-color-dot" id="textBgDot" style="background-color: transparent; border: 1px dashed #cbd5e1;"></span>
+                                </button>
+                                <input type="color" id="textBgPicker" value="#000000" style="display: none;">
+                            </div>
+                        </div>
+
+                        <div class="formatting-cluster">
+                            <button class="t-btn" data-command="justifyLeft" title="Align Left"><i class="fa-solid fa-align-left"></i></button>
+                            <button class="t-btn" data-command="justifyCenter" title="Align Center"><i class="fa-solid fa-align-center"></i></button>
+                            <button class="t-btn" data-command="justifyRight" title="Align Right"><i class="fa-solid fa-align-right"></i></button>
+                        </div>
+                        
+                        <button class="t-btn" id="printTextBtn" title="Print"><i class="fa-solid fa-print"></i></button>
                     </div>
-                    
-                    <button class="t-btn" id="printTextBtn" title="Print"><i class="fa-solid fa-print"></i></button>
                 </div>
             </div>
         </header>
