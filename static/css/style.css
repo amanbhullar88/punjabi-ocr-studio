@@ -998,3 +998,82 @@ input:checked + .slider:before {
 .dropdown-menu.show {
     display: block;
 }
+
+/* ----------------------------------------------------
+   Rich Text Editor Toolbar
+   ---------------------------------------------------- */
+.editor-toolbar {
+    background-color: #0f172a; /* Match body slate 900 background */
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.toolbar-section {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.t-separator {
+    width: 1px;
+    height: 18px;
+    background-color: #334155;
+    margin: 0 4px;
+}
+
+.t-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    padding: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    transition: all 0.15s ease;
+}
+
+.t-btn:hover {
+    background-color: #1e293b;
+    color: #ffffff;
+}
+
+.t-btn.active {
+    background-color: #334155;
+    color: #38bdf8;
+}
+
+.t-val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #f8fafc;
+    min-width: 20px;
+    text-align: center;
+    user-select: none;
+}
+
+.color-picker-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.t-color-dot {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
