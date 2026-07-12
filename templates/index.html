@@ -51,11 +51,16 @@
                     </select>
                 </div>
 
-                <!-- File Upload Action -->
-                <div class="toolbar-group">
-                    <button id="uploadBtn" class="btn btn-primary"><i class="fa-solid fa-cloud-arrow-up"></i> Upload</button>
+                <!-- File Import Dropdown Action -->
+                <div class="toolbar-group dropdown-container">
+                    <div class="dropdown">
+                        <button id="importDropdownBtn" class="btn btn-primary"><i class="fa-solid fa-file-import"></i> Import Document <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 2px;"></i></button>
+                        <div id="importDropdownMenu" class="dropdown-menu">
+                            <a id="uploadDropdownItem"><i class="fa-solid fa-cloud-arrow-up"></i> Upload File</a>
+                            <a id="cameraDropdownItem"><i class="fa-solid fa-camera"></i> Scan Document</a>
+                        </div>
+                    </div>
                     <input type="file" id="fileInput" accept=".pdf,.docx,.png,.jpg,.jpeg" style="position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;">
-                    <button id="cameraBtn" class="btn btn-secondary"><i class="fa-solid fa-camera"></i> Camera</button>
                 </div>
 
                 <button id="mobileSettingsToggleBtn" class="btn btn-dark mobile-settings-toggle"><i class="fa-solid fa-sliders"></i> Tools</button>
@@ -66,7 +71,7 @@
                 <div class="toolbar-row drawer-row">
                     <!-- Font Converter Settings -->
                     <div class="toolbar-group">
-                        <span class="toolbar-label">Src Font:</span>
+                        <span class="toolbar-label">Language:</span>
                         <select id="sourceFont" class="form-select w-auto-select">
                             <option value="auto">Auto Detect</option>
                             <option value="Unicode">Unicode (Raavi)</option>
@@ -141,9 +146,7 @@
             <div class="status-left" id="statusBar">
                 <span id="statusMessage"><i class="fa-solid fa-circle-check text-success"></i> Ready and Online</span>
             </div>
-            <div class="status-right warning-banner">
-                <i class="fa-solid fa-triangle-exclamation"></i> Install fonts for proper display
-            </div>
+
         </div>
 
         <!-- DOCX Download Area -->
