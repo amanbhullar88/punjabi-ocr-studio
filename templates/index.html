@@ -59,8 +59,8 @@
                         <div class="dropdown">
                             <button id="importDropdownBtn" class="btn btn-primary"><i class="fa-solid fa-cloud-arrow-up"></i> Import / Scan <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 2px;"></i></button>
                             <div id="importDropdownMenu" class="dropdown-menu">
-                                <a id="uploadDropdownItem"><i class="fa-solid fa-cloud-arrow-up"></i> Upload File</a>
-                                <a id="cameraDropdownItem"><i class="fa-solid fa-camera"></i> Scan Document</a>
+                                <a id="uploadDropdownItem" href="javascript:void(0)"><i class="fa-solid fa-cloud-arrow-up"></i> Upload File</a>
+                                <a id="cameraDropdownItem" href="javascript:void(0)"><i class="fa-solid fa-camera"></i> Scan Document</a>
                             </div>
                         </div>
                         <input type="file" id="fileInput" accept=".pdf,.docx,.png,.jpg,.jpeg" style="position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;">
@@ -144,7 +144,7 @@
                 <div class="group-divider"></div>
 
                 <!-- Group 5: Text Formatting -->
-                <div class="toolbar-group">
+                <div class="toolbar-group" style="margin-left: auto;">
                     <div class="group-title"><i class="fa-solid fa-wand-magic-sparkles"></i> Formatting</div>
                     <div class="group-controls">
                         <div class="formatting-cluster">
