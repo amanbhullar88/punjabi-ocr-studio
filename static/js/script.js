@@ -918,4 +918,126 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // ---------- Rich Text Editor Toolbar Actions ----------
+    const textEditor = document.getElementById('convertedText');
+    const editorToolbar = document.getElementById('editorToolbar');
+
+    if (textEditor && editorToolbar) {
+        // 1. Text commands (Bold, Italic, Underline, Lists, Align, Undo, Redo)
+        editorToolbar.querySelectorAll('.t-btn[data-command]').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const command = this.getAttribute('data-command');
+                document.execCommand(command, false, null);
+                textEditor.focus();
+                updateToolbarState();
+            });
+        });
+
+        // 2. Font Size (Entire Editor size adjustment)
+        let currentFontSize = 15; // default output font-size is 15px
+        const fontSizeVal = document.getElementById('fontSizeVal');
+        const fontSizeDec = document.getElementById('fontSizeDec');
+        const fontSizeInc = document.getElementById('fontSizeInc');
+
+        if (fontSizeDec && fontSizeInc && fontSizeVal) {
+            fontSizeDec.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentFontSize > 10) {
+                    currentFontSize--;
+                    textEditor.style.fontSize = currentFontSize + 'px';
+                    fontSizeVal.innerText = currentFontSize;
+                }
+            });
+
+            fontSizeInc.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentFontSize < 36) {
+                    currentFontSize++;
+                    textEditor.style.fontSize = currentFontSize + 'px';
+                    fontSizeVal.innerText = currentFontSize;
+                }
+            });
+        }
+
+        // 3. Text Color picker
+        const textColorBtn = document.getElementById('textColorBtn');
+        const textColorPicker = document.getElementById('textColorPicker');
+        const textColorDot = document.getElementById('textColorDot');
+
+        if (textColorBtn && textColorPicker) {
+            textColorBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                textColorPicker.click();
+            });
+
+            textColorPicker.addEventListener('input', function() {
+                const color = this.value;
+                if (textColorDot) textColorDot.style.backgroundColor = color;
+                document.execCommand('foreColor', false, color);
+            });
+        }
+
+        // 4. Highlight/Background Color picker
+        const textBgBtn = document.getElementById('textBgBtn');
+        const textBgPicker = document.getElementById('textBgPicker');
+        const textBgDot = document.getElementById('textBgDot');
+
+        if (textBgBtn && textBgPicker) {
+            textBgBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                textBgPicker.click();
+            });
+
+            textBgPicker.addEventListener('input', function() {
+                const color = this.value;
+                if (textBgDot) {
+                    textBgDot.style.backgroundColor = color;
+                    textBgDot.style.border = 'none';
+                }
+                if (!document.execCommand('hiliteColor', false, color)) {
+                    document.execCommand('backColor', false, color);
+                }
+            });
+        }
+
+        // 5. Print Output text
+        const printTextBtn = document.getElementById('printTextBtn');
+        if (printTextBtn) {
+            printTextBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const content = textEditor.innerHTML;
+                const printWindow = window.open('', '_blank', 'height=600,width=800');
+                printWindow.document.write('<html><head><title>Print Document</title>');
+                printWindow.document.write('<style>');
+                printWindow.document.write('body { font-family: Arial, sans-serif; padding: 25px; line-height: 1.6; }');
+                printWindow.document.write('</style></head><body>');
+                printWindow.document.write(content);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+            });
+        }
+
+        // 6. Active state update for buttons based on text selection
+        function updateToolbarState() {
+            editorToolbar.querySelectorAll('.t-btn[data-command]').forEach(btn => {
+                const command = btn.getAttribute('data-command');
+                try {
+                    if (document.queryCommandState(command)) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                } catch(e) {}
+            });
+        }
+
+        textEditor.addEventListener('keyup', updateToolbarState);
+        textEditor.addEventListener('mouseup', updateToolbarState);
+        textEditor.addEventListener('click', updateToolbarState);
+    }
 });
