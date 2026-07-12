@@ -360,33 +360,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ---------- Camera Scanning Module ----------
     const cameraDropdownItem = document.getElementById('cameraDropdownItem');
+    const cameraBtnMobile = document.getElementById('cameraBtnMobile');
     const cameraContainer = document.getElementById('cameraContainer');
     const video = document.getElementById('video');
     const captureBtn = document.getElementById('captureBtn');
     const closeCamBtn = document.getElementById('closeCamBtn');
     let videoStream = null;
 
-    if (cameraDropdownItem) {
-        cameraDropdownItem.addEventListener('click', async function() {
-            if (importDropdownMenu) importDropdownMenu.classList.remove('show');
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                alert('Camera access is not supported in this browser or environment (e.g. Chrome on iOS or insecure context). Please use Safari on iOS.');
-                updateStatus('❌ Camera error: getUserMedia not supported', 'danger');
-                return;
-            }
-            try {
-                videoStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment' } 
-                });
-                video.srcObject = videoStream;
-                cameraContainer.style.display = 'block';
-                updateStatus('📷 Camera initialized - hold document steady', 'info');
-            } catch (err) {
-                updateStatus('❌ Camera error: ' + err.message, 'danger');
-                alert('Could not access camera. Please grant camera permissions.');
-            }
-        });
+    async function triggerCamera() {
+        if (importDropdownMenu) importDropdownMenu.classList.remove('show');
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert('Camera access is not supported in this browser or environment (e.g. Chrome on iOS or insecure context). Please use Safari on iOS.');
+            updateStatus('❌ Camera error: getUserMedia not supported', 'danger');
+            return;
+        }
+        try {
+            videoStream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: 'environment' } 
+            });
+            video.srcObject = videoStream;
+            cameraContainer.style.display = 'block';
+            updateStatus('📷 Camera initialized - hold document steady', 'info');
+        } catch (err) {
+            updateStatus('❌ Camera error: ' + err.message, 'danger');
+            alert('Could not access camera. Please grant camera permissions.');
+        }
     }
+
+    if (cameraDropdownItem) cameraDropdownItem.addEventListener('click', triggerCamera);
+    if (cameraBtnMobile) cameraBtnMobile.addEventListener('click', triggerCamera);
 
     function stopCamera() {
         if (videoStream) {
@@ -423,14 +425,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ---------- File Upload Module ----------
     const uploadDropdownItem = document.getElementById('uploadDropdownItem');
+    const uploadBtnMobile = document.getElementById('uploadBtnMobile');
     const fileInput = document.getElementById('fileInput');
 
-    if (uploadDropdownItem) {
-        uploadDropdownItem.addEventListener('click', function() {
-            if (importDropdownMenu) importDropdownMenu.classList.remove('show');
-            fileInput.click();
-        });
+    function triggerUpload() {
+        if (importDropdownMenu) importDropdownMenu.classList.remove('show');
+        fileInput.click();
     }
+
+    if (uploadDropdownItem) uploadDropdownItem.addEventListener('click', triggerUpload);
+    if (uploadBtnMobile) uploadBtnMobile.addEventListener('click', triggerUpload);
 
     fileInput.addEventListener('change', function() {
         const file = this.files[0];
