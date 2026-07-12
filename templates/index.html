@@ -11,7 +11,7 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=2.2">
 </head>
 <body>
 
@@ -69,7 +69,7 @@
                         <button id="uploadBtnMobile" class="btn btn-primary mobile-only-import"><i class="fa-solid fa-cloud-arrow-up"></i> Upload</button>
                         <button id="cameraBtnMobile" class="btn btn-secondary mobile-only-import"><i class="fa-solid fa-camera"></i> Camera</button>
                         
-                        <input type="file" id="fileInput" accept=".pdf,.docx,.png,.jpg,.jpeg" style="position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none;">
+                        <input type="file" id="fileInput" accept=".pdf,.docx,.png,.jpg,.jpeg" style="position: absolute; width: 1px; height: 1px; opacity: 0; z-index: -1;">
                     </div>
                 </div>
 
@@ -299,6 +299,6 @@
 <!-- Tesseract.js CDN for Free Local OCR Fallback -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <!-- Custom JS -->
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}?v=2.2"></script>
 </body>
 </html>
