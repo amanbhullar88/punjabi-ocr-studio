@@ -756,41 +756,67 @@ input:checked + .slider:before {
         margin: 0;
     }
 
+    /* 2b. Hide top header branding on mobile for native app feel */
+    .studio-top-bar {
+        display: none !important;
+    }
+
     /* 3. Control Panel Toolbar */
-    .studio-header {
-        flex-shrink: 0;
-        padding: 8px;
+    .app-toolbar {
+        padding: 8px 10px;
+        gap: 8px;
         margin-bottom: 6px;
-        border-radius: 8px;
+        border-radius: 0; /* Full edge-to-edge mobile app aesthetic */
     }
 
     .toolbar-row {
         display: flex;
         flex-direction: row;
-        flex-wrap: wrap;
+        flex-wrap: nowrap !important;
         align-items: center;
-        gap: 6px;
+        gap: 12px;
+        width: 100%;
+        overflow-x: auto !important;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
     }
 
-    .toolbar-row.row-second {
-        margin-top: 6px;
-        padding-top: 6px;
+    .toolbar-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .row-second-ribbon {
+        margin-top: 8px;
+        padding-top: 8px;
         border-top: 1px solid #334155;
     }
 
     .toolbar-group {
         display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
+        flex-direction: column !important;
+        align-items: flex-start !important;
         gap: 4px;
-        flex: 1;
-        min-width: 150px;
+        flex: 0 0 auto !important;
+        min-width: 0 !important;
+    }
+
+    .group-controls {
+        display: flex;
+        flex-wrap: nowrap !important;
+        gap: 4px;
+        align-items: center;
     }
     
     .toolbar-group > * {
-        flex: 1;
-        min-width: 60px;
+        flex: 0 0 auto !important;
+        min-width: 0 !important;
+    }
+
+    .group-divider {
+        display: block !important;
+        height: 32px !important;
+        align-self: center;
+        margin: 0 !important;
     }
     
     .form-select, .form-control {
